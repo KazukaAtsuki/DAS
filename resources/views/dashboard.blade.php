@@ -9,15 +9,12 @@
         --das-bg-soft: #f1f5f9;
     }
 
-    /*
-       PERBAIKAN UTAMA DI SINI:
-       padding-top: 100px; -> Memberi jarak yang cukup dari header fixed
-    */
+    /* Container Adjustment */
     .dashboard-container {
         padding-top: 100px;
         padding-bottom: 50px;
-        max-width: 1600px; /* Opsional: Agar tidak terlalu lebar di layar raksasa */
-        margin: 0 auto;    /* Tengah */
+        max-width: 1600px;
+        margin: 0 auto;
     }
 
     /* Modern Card Style */
@@ -37,7 +34,7 @@
         border-color: rgba(0, 150, 136, 0.3);
     }
 
-    /* Glow Effect saat Hover */
+    /* Glow Effect */
     .card-sensor::before {
         content: '';
         position: absolute;
@@ -66,7 +63,7 @@
         opacity: 0.6;
     }
 
-    /* Live Indicator Pulse */
+    /* Live Indicator */
     .live-badge {
         background-color: rgba(34, 197, 94, 0.1);
         color: #16a34a;
@@ -83,7 +80,6 @@
         background-color: rgba(239, 68, 68, 0.1);
         color: #ef4444;
     }
-
     .live-dot {
         width: 6px;
         height: 6px;
@@ -97,7 +93,6 @@
         animation: none;
         box-shadow: none;
     }
-
     @keyframes pulse-green {
         0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
         70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
@@ -117,7 +112,7 @@
         color: var(--das-dark);
         letter-spacing: -2px;
         line-height: 1;
-        font-size: 3.5rem; /* Lebih besar dikit */
+        font-size: 3.5rem;
     }
     .unit-display {
         font-size: 1rem;
@@ -172,7 +167,10 @@
 
                 <!-- Menampilkan Nama Stack yang Sedang Dipilih -->
                 @php
-                    $currentStackName = $stacks->firstWhere('id', $selectedStackId)->stack_name ?? 'Select Stack';
+                    // Logic Judul: Kalau selectedStackId ada isinya, cari namanya. Kalau kosong/null, berarti "All Stacks"
+                    $currentStackName = $selectedStackId
+                        ? ($stacks->firstWhere('id', $selectedStackId)->stack_name ?? 'Unknown Stack')
+                        : 'All Stacks Overview';
                 @endphp
                 <span class="badge bg-primary text-white shadow-sm px-3">
                     {{ $currentStackName }}
@@ -187,6 +185,11 @@
                 <div class="input-group">
                     <span class="input-group-text bg-transparent border-0 pe-2"><i class="ti ti-filter text-muted"></i></span>
                     <select name="stack_id" class="form-select border-0 bg-transparent fw-bold text-dark py-1" style="min-width: 150px; cursor: pointer; box-shadow: none;" onchange="this.form.submit()">
+
+                        <!-- OPTION: ALL STACKS -->
+                        <option value="" {{ $selectedStackId == '' ? 'selected' : '' }}>All Stacks</option>
+
+                        <!-- Loop Stack Lain -->
                         @foreach($stacks as $s)
                             <option value="{{ $s->id }}" {{ $selectedStackId == $s->id ? 'selected' : '' }}>
                                 {{ $s->stack_name }}
@@ -208,14 +211,27 @@
     <!-- GRID SENSOR -->
     <div class="row g-4">
         @forelse($sensors as $sensor)
+            <!-- Kita buat logika manual untuk mengambil data log terakhir di view jika tidak pakai AJAX load awal -->
+            @php
+                $log = \App\Models\DasLog::where('sensor_config_id', $sensor->id)->latest('timestamp')->first();
+                $measured = $log ? number_format($log->measured_value, 2) : '0.00';
+                $raw = $log ? number_format($log->raw_value, 2) : '0.00';
+            @endphp
+
             <div class="col-md-6 col-lg-3 col-xl-3">
                 <div class="card card-sensor h-100 border-0">
                     <!-- Body: Value -->
                     <div class="card-body p-4">
 
-                        <!-- Top Row -->
+                        <!-- Top Row: Parameter & Stack Name -->
                         <div class="d-flex justify-content-between align-items-start mb-4">
-                            <h6 class="param-name text-uppercase">{{ $sensor->parameter_name }}</h6>
+                            <div>
+                                <h6 class="param-name text-uppercase mb-0">{{ $sensor->parameter_name }}</h6>
+                                <!-- Tampilkan nama stack kecil jika mode All Stacks -->
+                                @if(!$selectedStackId)
+                                    <small class="text-muted" style="font-size: 10px;">{{ $sensor->stackConfig->stack_name ?? '-' }}</small>
+                                @endif
+                            </div>
 
                             <!-- Status Badge -->
                             <div class="live-badge {{ $sensor->status == 'Inactive' ? 'offline' : '' }}">
@@ -226,7 +242,7 @@
                         <!-- Value Row (Measured) -->
                         <div class="d-flex align-items-end gap-2 mb-2">
                             <span class="value-display" id="measured-{{ $sensor->id }}">
-                                0.00
+                                {{ $measured }}
                             </span>
                             <span class="unit-display mb-3">{{ $sensor->unit->name ?? '-' }}</span>
                         </div>
@@ -238,7 +254,7 @@
                             <i class="ti ti-bolt text-warning"></i> Input Signal
                         </div>
                         <div class="raw-value" id="raw-{{ $sensor->id }}">
-                            0.00
+                            {{ $raw }}
                         </div>
                     </div>
                 </div>
@@ -251,8 +267,8 @@
                         <div class="bg-light-primary text-primary p-4 rounded-circle d-inline-flex mb-3">
                             <i class="ti ti-database-off fs-1"></i>
                         </div>
-                        <h4 class="fw-bold text-dark">No Data Source</h4>
-                        <p class="text-muted">Sensor configuration not found for this stack.</p>
+                        <h4 class="fw-bold text-dark">No Sensors Found</h4>
+                        <p class="text-muted">There are no active sensors configured for this selection.</p>
                         <a href="{{ route('sensor-config.create') }}" class="btn btn-primary rounded-pill px-4 mt-2">
                             Add Sensor
                         </a>
@@ -268,9 +284,9 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        // Ambil stack_id
+        // Ambil stack_id dari URL (bisa string kosong jika All)
         const urlParams = new URLSearchParams(window.location.search);
-        const stackId = urlParams.get('stack_id') || "{{ $selectedStackId }}";
+        const stackId = urlParams.get('stack_id') || "";
 
         // Fungsi Update Data
         function fetchRealtimeData() {
@@ -278,25 +294,25 @@
                 url: "{{ route('dashboard') }}",
                 type: "GET",
                 data: {
-                    stack_id: stackId
+                    stack_id: stackId // Kirim ID stack (atau kosong)
                 },
                 success: function(response) {
                     if(Array.isArray(response)){
                         response.forEach(function(item) {
+                            // Update Angka di HTML
                             $('#measured-' + item.sensor_id).text(item.measured);
                             $('#raw-' + item.sensor_id).text(item.raw);
                         });
                     }
                 },
                 error: function(xhr) {
-                    console.log("Monitoring Sync: Waiting for data...");
+                    // console.log("Waiting for data...");
                 }
             });
         }
 
         // Jalankan setiap 2 detik
         setInterval(fetchRealtimeData, 2000);
-        fetchRealtimeData();
     });
 </script>
 @endpush
