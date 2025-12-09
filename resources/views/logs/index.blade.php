@@ -8,6 +8,12 @@
         --das-dark: #1A1A1A;
     }
 
+    /* PENTING: Fix Header Tertutup */
+    .page-container {
+        padding-top: 100px; /* Jarak dari atas */
+        padding-bottom: 50px;
+    }
+
     /* Card Styling */
     .card-modern {
         border: none;
@@ -74,7 +80,8 @@
 @endpush
 
 @section('content')
-<div class="container-fluid">
+<!-- Tambahkan class 'page-container' di sini -->
+<div class="container-fluid page-container">
 
     <!-- HEADER SECTION -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
@@ -135,23 +142,16 @@
 @endsection
 
 @push('scripts')
-    <!-- Pastikan urutan script benar (jQuery -> DataTable CSS -> DataTable JS) -->
+    <!-- Script DataTables (Sama seperti sebelumnya) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
-    <!-- Hapus jQuery jika sudah ada di master layout, jika belum biarkan -->
-    <!-- <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script> -->
-
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            // 1. Inisialisasi DataTable
             var table = $('#logsTable').DataTable({
                 processing: true,
                 serverSide: true,
-                // Hilangkan fitur search bawaan jika ingin tampilan lebih clean (opsional)
-                // searching: false,
                 ajax: {
                     url: "{{ route('logs.index') }}",
                     data: function (d) {
@@ -172,14 +172,13 @@
                     { data: 'raw_value', name: 'raw_value' },
                     { data: 'status_sent_dis', name: 'status_sent_dis' },
                 ],
-                order: [[1, 'desc']], // Default urut timestamp terbaru
+                order: [[1, 'desc']],
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search records..."
                 }
             });
 
-            // 2. Event Listener: Kalau Dropdown Stack ganti, refresh tabel
             $('#filterStack').change(function(){
                 table.draw();
             });

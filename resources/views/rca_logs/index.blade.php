@@ -2,10 +2,16 @@
 
 @push('styles')
 <style>
-    /* --- CUSTOM CSS FOR RCA PAGE (Sama dengan Logs Data) --- */
+    /* --- CUSTOM CSS FOR RCA PAGE --- */
     :root {
         --das-teal: #009688;
         --das-dark: #1A1A1A;
+    }
+
+    /* PENTING: Fix Header Tertutup */
+    .page-container {
+        padding-top: 100px; /* Jarak dari atas agar tidak ketutup header */
+        padding-bottom: 50px;
     }
 
     /* Card Styling */
@@ -68,7 +74,8 @@
 @endpush
 
 @section('content')
-<div class="container-fluid">
+<!-- Tambahkan class 'page-container' di sini -->
+<div class="container-fluid page-container">
 
     <!-- HEADER SECTION -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">

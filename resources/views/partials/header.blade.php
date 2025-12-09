@@ -54,7 +54,6 @@
                             background-color: #009688;
                             box-shadow: 0 4px 10px rgba(0, 150, 136, 0.25);
                         }
-                        /* Hapus panah dropdown default */
                         .dropdown-toggle::after { display: none; }
 
                         /* CSS Custom Dropdown Item */
@@ -69,17 +68,9 @@
                             font-size: 13px;
                             transition: all 0.2s;
                         }
-                        .custom-dd-item i {
-                            font-size: 18px;
-                            color: #009688; /* Warna Ikon Teal */
-                            transition: transform 0.2s;
-                        }
                         .custom-dd-item:hover {
                             background-color: #f2fcfb;
                             color: #009688;
-                        }
-                        .custom-dd-item:hover i {
-                            transform: scale(1.1); /* Efek zoom dikit pas hover */
                         }
                     </style>
 
@@ -102,26 +93,10 @@
                             Master Data <i class="ti ti-chevron-down" style="font-size: 10px;"></i>
                         </a>
                         <ul class="dropdown-menu border-0 shadow-lg mt-3 p-2 rounded-3" style="min-width: 220px;">
-                            <li>
-                                <a class="dropdown-item custom-dd-item" href="{{ route('stack-config.index') }}">
-                                    <i class="ti ti-server"></i> Stack Config
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item custom-dd-item" href="{{ route('references.index') }}">
-                                    <i class="ti ti-book-2"></i> References
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item custom-dd-item" href="{{ route('units.index') }}">
-                                    <i class="ti ti-scale"></i> Units
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item custom-dd-item" href="{{ route('sensor-config.index') }}">
-                                    <i class="ti ti-broadcast"></i> Sensor Config
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item custom-dd-item" href="{{ route('stack-config.index') }}"><i class="ti ti-server"></i> Stack Config</a></li>
+                            <li><a class="dropdown-item custom-dd-item" href="{{ route('sensor-config.index') }}"><i class="ti ti-broadcast"></i> Sensor Config</a></li>
+                            <li><a class="dropdown-item custom-dd-item" href="{{ route('references.index') }}"><i class="ti ti-book-2"></i> References</a></li>
+                            <li><a class="dropdown-item custom-dd-item" href="{{ route('units.index') }}"><i class="ti ti-scale"></i> Units</a></li>
                         </ul>
                     </li>
 
@@ -131,16 +106,8 @@
                             System <i class="ti ti-chevron-down" style="font-size: 10px;"></i>
                         </a>
                         <ul class="dropdown-menu border-0 shadow-lg mt-3 p-2 rounded-3" style="min-width: 220px;">
-                            <li>
-                                <a class="dropdown-item custom-dd-item" href="{{ route('global-config.index') }}">
-                                    <i class="ti ti-settings"></i> Global Config
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item custom-dd-item" href="{{ route('users.index') }}">
-                                    <i class="ti ti-users"></i> User Management
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item custom-dd-item" href="{{ route('global-config.index') }}"><i class="ti ti-settings"></i> Global Config</a></li>
+                            <li><a class="dropdown-item custom-dd-item" href="{{ route('users.index') }}"><i class="ti ti-users"></i> User Management</a></li>
                         </ul>
                     </li>
 
@@ -148,62 +115,133 @@
               </div>
 
               <!-- 3. BAGIAN KANAN: NOTIF & PROFIL -->
-              <div class="d-flex align-items-center justify-content-end gap-3" style="width: 250px;">
+              <div class="d-flex align-items-center justify-content-end gap-2" style="width: 250px;">
 
-                <!-- Notifikasi -->
-                <a class="nav-link nav-icon-hover p-2 rounded-circle hover-bg-light position-relative" href="javascript:void(0)">
-                    <i class="ti ti-bell-ringing fs-5 text-dark"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width: 8px; height: 8px; top: 12px !important; left: 25px !important;"></span>
-                </a>
+                <!-- Notifikasi Dropdown (FIXED) -->
+                <li class="nav-item dropdown me-2 list-unstyled">
+                    <a class="nav-link nav-icon-hover d-flex align-items-center justify-content-center rounded-circle" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px; transition: 0.2s;">
+                      <div class="position-relative d-inline-block">
+                          <i class="ti ti-bell-ringing" style="font-size: 1.3rem;"></i>
+                          @if(count($notifications) > 0)
+                            <span class="position-absolute bg-primary rounded-circle border border-white"
+                                  style="width: 10px; height: 10px; top: 0; right: 0;">
+                            </span>
+                          @endif
+                      </div>
+                    </a>
 
-                <!-- Profil User -->
+                    <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up shadow-lg border-0 rounded-4 mt-2" aria-labelledby="drop2" style="min-width: 320px;">
+                      <div class="d-flex align-items-center justify-content-between py-3 px-4 border-bottom">
+                        <h5 class="mb-0 fs-4 fw-bold text-dark">User Logs</h5>
+                        <span class="badge bg-light-primary text-primary rounded-pill px-3 py-1 fs-2 fw-semibold">{{ count($notifications) }} New</span>
+                      </div>
+                      <div class="message-body" data-simplebar style="max-height: 350px; overflow-y: auto;">
+                        @forelse($notifications as $log)
+                            <a href="javascript:void(0)" class="py-3 px-4 d-flex align-items-start dropdown-item border-bottom border-light">
+                              <div class="position-relative me-3 mt-1">
+                                  @php
+                                      $icon = 'ti-edit'; $color = 'primary';
+                                      if($log->action == 'CREATE') { $icon = 'ti-plus'; $color = 'success'; }
+                                      elseif($log->action == 'DELETE') { $icon = 'ti-trash'; $color = 'danger'; }
+                                      elseif($log->action == 'LOGIN') { $icon = 'ti-login'; $color = 'info'; }
+                                      elseif($log->action == 'LOGOUT') { $icon = 'ti-logout'; $color = 'warning'; }
+                                  @endphp
+                                  <div class="bg-light-{{ $color }} text-{{ $color }} rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                      <i class="ti {{ $icon }} fs-5"></i>
+                                  </div>
+                              </div>
+                              <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="mb-0 fw-bold fs-3 text-dark">{{ $log->user->name ?? 'System' }}</h6>
+                                    <span class="fs-2 text-muted text-nowrap ms-2">{{ $log->created_at->diffForHumans(null, true, true) }}</span>
+                                </div>
+                                <span class="d-block text-muted fs-2 text-truncate" style="max-width: 200px;">{{ $log->description }}</span>
+                              </div>
+                            </a>
+                        @empty
+                            <div class="py-5 text-center"><span class="text-muted fs-3">No recent activity.</span></div>
+                        @endforelse
+                      </div>
+                      <div class="py-3 px-4 bg-light rounded-bottom-4 text-center">
+                        <a href="{{ route('activity-logs.index') }}" class="text-primary fw-semibold fs-3 text-decoration-none">Check All Activity Logs <i class="ti ti-chevron-right fs-2 ms-1"></i></a>
+                      </div>
+                    </div>
+                </li>
+
+                <!-- PROFIL USER MODERN -->
                 <div class="dropdown">
                     @php
                         $role = Auth::user()->role;
-
-                        if ($role === 'Administrator') {
-                            $avatar = 'user-1.jpg';      // Foto Admin
-                            $borderColor = 'border-primary'; // Warna Biru
-                            $roleColor = 'text-primary';
-                        } else {
-                            $avatar = 'user-2.jpg';      // Foto Operator (Pastikan file ini ada di folder public/template/assets/images/profile/)
-                            $borderColor = 'border-success'; // Warna Hijau
-                            $roleColor = 'text-success';
-                        }
+                        $avatar = ($role === 'Administrator') ? 'user-1.jpg' : 'user-2.jpg';
                     @endphp
 
-                    <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-1 ps-2 pe-3 rounded-pill border bg-white hover-shadow transition" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false" style="transition: all 0.3s;">
+                    <!-- Trigger Profil -->
+                    <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-1 pe-3 rounded-pill bg-white hover-bg-light transition"
+                       href="javascript:void(0)" id="dropProfile" data-bs-toggle="dropdown" aria-expanded="false"
+                       style="transition: all 0.3s; border: 1px solid transparent;">
 
-                      <!-- Gambar Profil Dinamis -->
-                      <!-- Ditambah border warna sesuai role -->
-                      <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
-                           alt="" width="32" height="32"
-                           class="rounded-circle border border-2 {{ $borderColor }}">
+                        <!-- Foto + Status Online -->
+                        <div class="position-relative">
+                            <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
+                                 alt="" width="38" height="38"
+                                 class="rounded-circle" style="object-fit: cover;">
 
-                      <div class="d-none d-md-block text-start lh-1 me-1">
-                          <p class="mb-0 fw-bold text-dark" style="font-size: 12px;">{{ Auth::user()->name }}</p>
-                          <!-- Warna teks role juga dinamis -->
-                          <span class="{{ $roleColor }} fw-semibold" style="font-size: 10px;">{{ Auth::user()->role }}</span>
-                      </div>
-
-                      <i class="ti ti-caret-down-filled text-muted" style="font-size: 10px;"></i>
-                    </a>
-
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up border-0 shadow-lg mt-2 p-2 rounded-3" aria-labelledby="drop2">
-
-                        <!-- Header Dropdown Kecil -->
-                        <div class="px-2 py-2 mb-2 bg-light rounded-2 text-center">
-                            <h6 class="mb-0 fs-3 fw-bold">{{ Auth::user()->name }}</h6>
-                            <span class="badge {{ $role === 'Administrator' ? 'bg-primary' : 'bg-success' }} rounded-pill px-2 py-1" style="font-size: 10px;">
-                                {{ Auth::user()->role }}
-                            </span>
+                            <!-- Titik Hijau (Online) -->
+                            <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
+                                  style="width: 12px; height: 12px;"></span>
                         </div>
 
-                        <div class="message-body">
+                        <!-- Teks Nama & Role (Kiri Rata) -->
+                        <div class="d-none d-md-block text-start lh-sm ms-1">
+                            <p class="mb-0 fw-bold text-dark" style="font-size: 13px;">{{ Auth::user()->name }}</p>
+                            <small class="text-muted" style="font-size: 11px;">{{ Auth::user()->role }}</small>
+                        </div>
+
+                        <!-- Icon Chevron Kecil -->
+                        <i class="ti ti-chevron-down text-muted ms-1" style="font-size: 12px;"></i>
+                    </a>
+
+                    <!-- Isi Dropdown Profil -->
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up border-0 shadow-lg mt-3 p-0 rounded-4 overflow-hidden"
+                         aria-labelledby="dropProfile" style="min-width: 280px;">
+
+                        <!-- Header Dropdown (Warna Background Soft) -->
+                        <div class="p-4 bg-light-primary bg-opacity-50 text-center border-bottom border-light">
+                            <div class="position-relative d-inline-block mb-2">
+                                <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
+                                     alt="" width="70" height="70" class="rounded-circle shadow-sm border border-2 border-white">
+                                <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
+                                      style="width: 16px; height: 16px;"></span>
+                            </div>
+                            <h5 class="fw-bold mb-0 text-dark">{{ Auth::user()->name }}</h5>
+                            <span class="text-muted fs-3">{{ Auth::user()->email }}</span>
+                        </div>
+
+                        <!-- Menu Actions -->
+                        <div class="p-2">
+                            <a href="javascript:void(0)" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3">
+                                <div class="bg-light p-2 rounded-circle text-primary"><i class="ti ti-user fs-5"></i></div>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold text-dark">My Profile</h6>
+                                    <span class="text-muted small">Account settings</span>
+                                </div>
+                            </a>
+
+                            <!-- Tambahan menu biar gak sepi -->
+                            <a href="javascript:void(0)" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 mt-1">
+                                <div class="bg-light p-2 rounded-circle text-info"><i class="ti ti-shield-lock fs-5"></i></div>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold text-dark">Security</h6>
+                                    <span class="text-muted small">Change password</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="p-3 border-top bg-light bg-opacity-25">
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-danger w-100 btn-sm d-flex align-items-center justify-content-center gap-2">
-                                    <i class="ti ti-logout"></i> Logout
+                                <button type="submit" class="btn btn-outline-danger w-100 rounded-pill py-2 fw-bold d-flex align-items-center justify-content-center gap-2 transition hover-scale">
+                                    <i class="ti ti-power fs-5"></i> Sign Out
                                 </button>
                             </form>
                         </div>

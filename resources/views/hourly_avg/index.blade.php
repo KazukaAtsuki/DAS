@@ -6,7 +6,13 @@
     :root {
         --das-teal: #009688;
         --das-dark: #1A1A1A;
-        --das-blue: #3b82f6; /* Warna biru untuk tombol SIMPEL */
+        --das-blue: #3b82f6;
+    }
+
+    /* PENTING: Fix Header Tertutup */
+    .page-container {
+        padding-top: 100px; /* Jarak dari atas */
+        padding-bottom: 50px;
     }
 
     .card-modern {
@@ -77,7 +83,8 @@
 @endpush
 
 @section('content')
-<div class="container-fluid">
+<!-- Tambahkan class 'page-container' di sini -->
+<div class="container-fluid page-container">
 
     <!-- HEADER SECTION -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">

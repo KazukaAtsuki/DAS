@@ -12,6 +12,7 @@ use App\Http\Controllers\DasLogController;
 use App\Http\Controllers\RcaLogController;
 use App\Http\Controllers\HourlyAverageController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ActivityLogController;
 
 
 /*
@@ -41,6 +42,9 @@ Route::get('/dashboard/live', [DashboardController::class, 'getLiveDashboard'])-
 
 
     });
+
+    // Route Activity Logs
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
     // Sensor Config
     Route::resource('sensor-config', SensorConfigController::class);
