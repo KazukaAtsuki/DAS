@@ -13,6 +13,8 @@ use App\Http\Controllers\RcaLogController;
 use App\Http\Controllers\HourlyAverageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\HourlyLogController;
+
 
 
 /*
@@ -38,10 +40,25 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
       // PENTING: Route untuk AJAX Live Update (Tiap 2 Detik)
-Route::get('/dashboard/live', [DashboardController::class, 'getLiveDashboard'])->name('dashboard.live');
+      Route::get('/dashboard/live', [DashboardController::class, 'getLiveDashboard'])->name('dashboard.live');
 
+        // Route Toggle RCA (BARU)
+        Route::post('/dashboard/toggle-rca', [DashboardController::class, 'toggleRca'])
+        ->name('dashboard.toggle-rca')
+        ->middleware('auth');
 
     });
+
+    // Route Hourly Logs
+    Route::get('/hourly-avg', [HourlyLogController::class, 'index'])->name('hourly.index');
+
+    // Route Profil
+    Route::get('/my-profile', [AuthController::class, 'profile'])->name('my-profile');
+    Route::put('/my-profile', [AuthController::class, 'updateProfile'])->name('my-profile.update');
+
+    // Route Security
+    Route::get('/security', [AuthController::class, 'security'])->name('security');
+    Route::put('/security', [AuthController::class, 'updatePassword'])->name('security.update');
 
     // Route Activity Logs
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');

@@ -87,7 +87,6 @@
                         <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('hourly.*') ? 'active' : '' }}" href="{{ route('hourly.index') }}">Hourly Avg</a>
                     </li>
 
-                    <!-- Dropdown Master Data -->
                     <li class="nav-item dropdown">
                         <a class="nav-link nav-custom text-uppercase dropdown-toggle {{ request()->is('master*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Master Data <i class="ti ti-chevron-down" style="font-size: 10px;"></i>
@@ -100,7 +99,6 @@
                         </ul>
                     </li>
 
-                    <!-- Dropdown System -->
                     <li class="nav-item dropdown">
                         <a class="nav-link nav-custom text-uppercase dropdown-toggle {{ request()->is('system*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             System <i class="ti ti-chevron-down" style="font-size: 10px;"></i>
@@ -117,14 +115,18 @@
               <!-- 3. BAGIAN KANAN: NOTIF & PROFIL -->
               <div class="d-flex align-items-center justify-content-end gap-2" style="width: 250px;">
 
-                <!-- Notifikasi Dropdown (FIXED) -->
+                <!-- Notifikasi Dropdown (FIXED COLOR TEAL) -->
                 <li class="nav-item dropdown me-2 list-unstyled">
                     <a class="nav-link nav-icon-hover d-flex align-items-center justify-content-center rounded-circle" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px; transition: 0.2s;">
+                      <style>
+                          .nav-icon-hover:hover { background-color: #f3f4f6; }
+                          .nav-icon-hover:hover i { color: #009688 !important; }
+                      </style>
                       <div class="position-relative d-inline-block">
-                          <i class="ti ti-bell-ringing" style="font-size: 1.3rem;"></i>
+                          <i class="ti ti-bell-ringing" style="font-size: 1.3rem; color: #5a6a85; transition: color 0.2s;"></i>
                           @if(count($notifications) > 0)
                             <span class="position-absolute bg-primary rounded-circle border border-white"
-                                  style="width: 10px; height: 10px; top: 0; right: 0;">
+                                  style="width: 8px; height: 8px; top: 0; right: 0;">
                             </span>
                           @endif
                       </div>
@@ -140,13 +142,37 @@
                             <a href="javascript:void(0)" class="py-3 px-4 d-flex align-items-start dropdown-item border-bottom border-light">
                               <div class="position-relative me-3 mt-1">
                                   @php
-                                      $icon = 'ti-edit'; $color = 'primary';
-                                      if($log->action == 'CREATE') { $icon = 'ti-plus'; $color = 'success'; }
-                                      elseif($log->action == 'DELETE') { $icon = 'ti-trash'; $color = 'danger'; }
-                                      elseif($log->action == 'LOGIN') { $icon = 'ti-login'; $color = 'info'; }
-                                      elseif($log->action == 'LOGOUT') { $icon = 'ti-logout'; $color = 'warning'; }
+                                      // --- PERUBAHAN WARNA DI SINI ---
+                                      // Default: Hijau Teal khas DAS
+                                      $icon = 'ti-edit';
+                                      $bgColor = '#E0F2F1';  // Teal Muda Pudar (Background)
+                                      $textColor = '#009688'; // Teal Tua (Icon)
+
+                                      if($log->action == 'CREATE') {
+                                          $icon = 'ti-plus';
+                                          $bgColor = '#E0F2F1'; $textColor = '#009688'; // Teal
+                                      }
+                                      elseif($log->action == 'DELETE') {
+                                          $icon = 'ti-trash';
+                                          $bgColor = '#FFEBEE'; $textColor = '#D32F2F'; // Merah (Tetap merah untuk warning)
+                                      }
+                                      elseif($log->action == 'LOGIN') {
+                                          $icon = 'ti-login';
+                                          $bgColor = '#E0F2F1'; $textColor = '#009688'; // Teal (Biar seragam)
+                                      }
+                                      elseif($log->action == 'LOGOUT') {
+                                          $icon = 'ti-logout';
+                                          $bgColor = '#FFF3E0'; $textColor = '#F57C00'; // Orange (Biar beda dikit)
+                                      }
+                                      else {
+                                          // Update/Edit
+                                          $bgColor = '#E0F2F1'; $textColor = '#009688'; // Teal
+                                      }
                                   @endphp
-                                  <div class="bg-light-{{ $color }} text-{{ $color }} rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+
+                                  <!-- Lingkaran Ikon Custom -->
+                                  <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                       style="width: 40px; height: 40px; background-color: {{ $bgColor }}; color: {{ $textColor }};">
                                       <i class="ti {{ $icon }} fs-5"></i>
                                   </div>
                               </div>
@@ -175,37 +201,29 @@
                         $avatar = ($role === 'Administrator') ? 'user-1.jpg' : 'user-2.jpg';
                     @endphp
 
-                    <!-- Trigger Profil -->
                     <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-1 pe-3 rounded-pill bg-white hover-bg-light transition"
                        href="javascript:void(0)" id="dropProfile" data-bs-toggle="dropdown" aria-expanded="false"
                        style="transition: all 0.3s; border: 1px solid transparent;">
 
-                        <!-- Foto + Status Online -->
                         <div class="position-relative">
                             <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
                                  alt="" width="38" height="38"
                                  class="rounded-circle" style="object-fit: cover;">
-
-                            <!-- Titik Hijau (Online) -->
                             <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
-                                  style="width: 12px; height: 12px;"></span>
+                                  style="width: 10px; height: 10px; border-width: 2px !important;"></span>
                         </div>
 
-                        <!-- Teks Nama & Role (Kiri Rata) -->
                         <div class="d-none d-md-block text-start lh-sm ms-1">
                             <p class="mb-0 fw-bold text-dark" style="font-size: 13px;">{{ Auth::user()->name }}</p>
                             <small class="text-muted" style="font-size: 11px;">{{ Auth::user()->role }}</small>
                         </div>
 
-                        <!-- Icon Chevron Kecil -->
                         <i class="ti ti-chevron-down text-muted ms-1" style="font-size: 12px;"></i>
                     </a>
 
-                    <!-- Isi Dropdown Profil -->
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up border-0 shadow-lg mt-3 p-0 rounded-4 overflow-hidden"
                          aria-labelledby="dropProfile" style="min-width: 280px;">
 
-                        <!-- Header Dropdown (Warna Background Soft) -->
                         <div class="p-4 bg-light-primary bg-opacity-50 text-center border-bottom border-light">
                             <div class="position-relative d-inline-block mb-2">
                                 <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
@@ -217,9 +235,8 @@
                             <span class="text-muted fs-3">{{ Auth::user()->email }}</span>
                         </div>
 
-                        <!-- Menu Actions -->
                         <div class="p-2">
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3">
+                            <a href="{{ route('my-profile') }}" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 transition hover-bg-light">
                                 <div class="bg-light p-2 rounded-circle text-primary"><i class="ti ti-user fs-5"></i></div>
                                 <div>
                                     <h6 class="mb-0 fw-semibold text-dark">My Profile</h6>
@@ -227,8 +244,7 @@
                                 </div>
                             </a>
 
-                            <!-- Tambahan menu biar gak sepi -->
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 mt-1">
+                            <a href="{{ route('security') }}" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 mt-1 hover-bg-light transition">
                                 <div class="bg-light p-2 rounded-circle text-info"><i class="ti ti-shield-lock fs-5"></i></div>
                                 <div>
                                     <h6 class="mb-0 fw-semibold text-dark">Security</h6>

@@ -6,15 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\StackConfig;
 use App\Models\SensorConfig;
 use App\Models\DasLog;
+use App\Models\GlobalConfig; // <--- 1. JANGAN LUPA IMPORT INI
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Ambil input stack_id dari filter
+        // --- 1. Logika Filter Stack (Code Lama) ---
         $selectedStackId = $request->query('stack_id');
 
-        // 2. Query Sensor
         $sensorQuery = SensorConfig::with(['unit', 'stackConfig']); // Eager load relasi
 
         // KUNCINYA DI SINI:
@@ -27,7 +27,12 @@ class DashboardController extends Controller
         $sensors = $sensorQuery->get();
         $stacks = StackConfig::all();
 
-        // 3. LOGIKA AJAX (Untuk Auto Refresh)
+        // --- 2. TAMBAHAN BARU: Ambil Status RCA ---
+        // Kita butuh variabel ini untuk menentukan warna tombol saat halaman dimuat
+        $globalConfig = GlobalConfig::first();
+        $isRcaOn = $globalConfig ? $globalConfig->is_rca_mode : false;
+
+        // --- 3. LOGIKA AJAX (Untuk Auto Refresh Data Sensor) ---
         if ($request->ajax()) {
             $realtimeData = [];
 
@@ -49,7 +54,33 @@ class DashboardController extends Controller
             return response()->json($realtimeData);
         }
 
-        // 4. Tampilan Awal
-        return view('dashboard', compact('stacks', 'sensors', 'selectedStackId'));
+        // 4. Tampilan Awal (Jangan lupa kirim variable isRcaOn)
+        return view('dashboard', compact('stacks', 'sensors', 'selectedStackId', 'isRcaOn'));
+    }
+
+    // --- 5. FUNGSI BARU: Toggle RCA Mode (Dipanggil saat tombol diklik) ---
+    public function toggleRca()
+    {
+        $config = GlobalConfig::first();
+
+        // Jaga-jaga jika data config belum ada (misal baru migrate)
+        if (!$config) {
+            $config = GlobalConfig::create([
+                'das_unit_name' => 'Default Unit',
+                'server_host' => '127.0.0.1',
+                'api_endpoint' => '/api',
+                'is_rca_mode' => false
+            ]);
+        }
+
+        // Ubah status (True jadi False, False jadi True)
+        $config->is_rca_mode = !$config->is_rca_mode;
+        $config->save();
+
+        // Kirim status baru ke Javascript agar tombol bisa berubah warna
+        return response()->json([
+            'status' => 'success',
+            'is_rca_mode' => $config->is_rca_mode
+        ]);
     }
 }
