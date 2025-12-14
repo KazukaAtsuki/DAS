@@ -16,7 +16,7 @@ class DasLogController extends Controller
 
         if ($request->ajax()) {
             // Query dasar: ambil data log beserta nama sensornya
-            $query = DasLog::with('sensorConfig')->latest('timestamp');
+            $query = DasLog::with('sensorConfig')->orderBy('id', 'desc');
 
             // FILTER: Jika user memilih Stack tertentu
             if ($request->has('stack_id') && $request->stack_id != '') {

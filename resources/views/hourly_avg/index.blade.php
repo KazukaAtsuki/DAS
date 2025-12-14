@@ -161,6 +161,7 @@
 
     <script>
         $(document).ready(function() {
+            // 1. Inisialisasi DataTable
             var table = $('#hourlyTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -181,19 +182,32 @@
                         }
                     },
                     { data: 'measured_value', name: 'measured_value' },
-                    { data: 'corrected_value', name: 'corrected_value' },
+                    {
+                        data: 'corrected_value',
+                        name: 'corrected_value',
+                        render: function(data) {
+                            // Style khusus untuk Corrected Value agar lebih menonjol
+                            return '<span class="fw-bold text-primary">' + data + '</span>';
+                        }
+                    },
                 ],
-                order: [[1, 'desc']],
+                order: [[0, 'asc']], // Urutkan berdasarkan No/ID
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search hourly data..."
                 }
             });
 
-            // Reload saat ganti stack
+            // 2. Reload saat ganti Stack
             $('#filterStack').change(function(){
                 table.draw();
             });
+
+            // 3. FITUR AUTO REFRESH (Setiap 3 Detik)
+            setInterval(function() {
+                // Reload data tanpa reset paging
+                table.ajax.reload(null, false);
+            }, 3000);
         });
     </script>
 @endpush

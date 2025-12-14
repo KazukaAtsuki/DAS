@@ -33,27 +33,34 @@
                 <ul class="navbar-nav flex-row align-items-center gap-1">
 
                     <style>
-                        /* CSS Custom Menu */
+                        /* --- CSS NAVIGASI BARU (STYLE GARIS BAWAH) --- */
                         .nav-custom {
                             font-weight: 700;
-                            font-size: 13px !important;
+                            font-size: 14px !important; /* Ukuran font sedikit diperbesar agar jelas */
                             color: #5a6a85 !important;
-                            padding: 8px 16px !important;
-                            border-radius: 50px;
+                            padding: 22px 10px !important; /* Padding atas bawah disesuaikan dengan tinggi navbar */
                             transition: all 0.2s ease;
                             display: flex;
                             align-items: center;
                             gap: 6px;
+                            border-bottom: 3px solid transparent; /* Garis transparan default */
+                            border-radius: 0; /* Hapus lengkungan */
                         }
+
+                        /* Efek Hover */
                         .nav-custom:hover {
                             color: #009688 !important;
-                            background-color: #f2fcfb;
+                            background-color: transparent; /* Tidak ada background saat hover */
                         }
+
+                        /* Efek Aktif (Garis Bawah Hijau) */
                         .nav-custom.active {
-                            color: #ffffff !important;
-                            background-color: #009688;
-                            box-shadow: 0 4px 10px rgba(0, 150, 136, 0.25);
+                            color: #009688 !important; /* Teks jadi Hijau Teal */
+                            background-color: transparent; /* Hapus background blok */
+                            box-shadow: none; /* Hapus bayangan */
+                            border-bottom: 3px solid #009688; /* Munculkan Garis Bawah */
                         }
+
                         .dropdown-toggle::after { display: none; }
 
                         /* CSS Custom Dropdown Item */
@@ -68,9 +75,17 @@
                             font-size: 13px;
                             transition: all 0.2s;
                         }
+                        .custom-dd-item i {
+                            font-size: 18px;
+                            color: #009688;
+                            transition: transform 0.2s;
+                        }
                         .custom-dd-item:hover {
                             background-color: #f2fcfb;
                             color: #009688;
+                        }
+                        .custom-dd-item:hover i {
+                            transform: scale(1.1);
                         }
                     </style>
 
@@ -91,7 +106,7 @@
                         <a class="nav-link nav-custom text-uppercase dropdown-toggle {{ request()->is('master*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Master Data <i class="ti ti-chevron-down" style="font-size: 10px;"></i>
                         </a>
-                        <ul class="dropdown-menu border-0 shadow-lg mt-3 p-2 rounded-3" style="min-width: 220px;">
+                        <ul class="dropdown-menu border-0 shadow-lg mt-0 p-2 rounded-bottom-3" style="min-width: 220px;">
                             <li><a class="dropdown-item custom-dd-item" href="{{ route('stack-config.index') }}"><i class="ti ti-server"></i> Stack Config</a></li>
                             <li><a class="dropdown-item custom-dd-item" href="{{ route('sensor-config.index') }}"><i class="ti ti-broadcast"></i> Sensor Config</a></li>
                             <li><a class="dropdown-item custom-dd-item" href="{{ route('references.index') }}"><i class="ti ti-book-2"></i> References</a></li>
@@ -103,7 +118,7 @@
                         <a class="nav-link nav-custom text-uppercase dropdown-toggle {{ request()->is('system*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             System <i class="ti ti-chevron-down" style="font-size: 10px;"></i>
                         </a>
-                        <ul class="dropdown-menu border-0 shadow-lg mt-3 p-2 rounded-3" style="min-width: 220px;">
+                        <ul class="dropdown-menu border-0 shadow-lg mt-0 p-2 rounded-bottom-3" style="min-width: 220px;">
                             <li><a class="dropdown-item custom-dd-item" href="{{ route('global-config.index') }}"><i class="ti ti-settings"></i> Global Config</a></li>
                             <li><a class="dropdown-item custom-dd-item" href="{{ route('users.index') }}"><i class="ti ti-users"></i> User Management</a></li>
                         </ul>
@@ -115,7 +130,7 @@
               <!-- 3. BAGIAN KANAN: NOTIF & PROFIL -->
               <div class="d-flex align-items-center justify-content-end gap-2" style="width: 250px;">
 
-                <!-- Notifikasi Dropdown (FIXED COLOR TEAL) -->
+                <!-- Notifikasi Dropdown -->
                 <li class="nav-item dropdown me-2 list-unstyled">
                     <a class="nav-link nav-icon-hover d-flex align-items-center justify-content-center rounded-circle" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px; transition: 0.2s;">
                       <style>
@@ -142,35 +157,15 @@
                             <a href="javascript:void(0)" class="py-3 px-4 d-flex align-items-start dropdown-item border-bottom border-light">
                               <div class="position-relative me-3 mt-1">
                                   @php
-                                      // --- PERUBAHAN WARNA DI SINI ---
-                                      // Default: Hijau Teal khas DAS
                                       $icon = 'ti-edit';
-                                      $bgColor = '#E0F2F1';  // Teal Muda Pudar (Background)
-                                      $textColor = '#009688'; // Teal Tua (Icon)
+                                      $bgColor = '#E0F2F1'; $textColor = '#009688';
 
-                                      if($log->action == 'CREATE') {
-                                          $icon = 'ti-plus';
-                                          $bgColor = '#E0F2F1'; $textColor = '#009688'; // Teal
-                                      }
-                                      elseif($log->action == 'DELETE') {
-                                          $icon = 'ti-trash';
-                                          $bgColor = '#FFEBEE'; $textColor = '#D32F2F'; // Merah (Tetap merah untuk warning)
-                                      }
-                                      elseif($log->action == 'LOGIN') {
-                                          $icon = 'ti-login';
-                                          $bgColor = '#E0F2F1'; $textColor = '#009688'; // Teal (Biar seragam)
-                                      }
-                                      elseif($log->action == 'LOGOUT') {
-                                          $icon = 'ti-logout';
-                                          $bgColor = '#FFF3E0'; $textColor = '#F57C00'; // Orange (Biar beda dikit)
-                                      }
-                                      else {
-                                          // Update/Edit
-                                          $bgColor = '#E0F2F1'; $textColor = '#009688'; // Teal
-                                      }
+                                      if($log->action == 'CREATE') { $icon = 'ti-plus'; $bgColor = '#E0F2F1'; $textColor = '#009688'; }
+                                      elseif($log->action == 'DELETE') { $icon = 'ti-trash'; $bgColor = '#FFEBEE'; $textColor = '#D32F2F'; }
+                                      elseif($log->action == 'LOGIN') { $icon = 'ti-login'; $bgColor = '#E0F2F1'; $textColor = '#009688'; }
+                                      elseif($log->action == 'LOGOUT') { $icon = 'ti-logout'; $bgColor = '#FFF3E0'; $textColor = '#F57C00'; }
                                   @endphp
 
-                                  <!-- Lingkaran Ikon Custom -->
                                   <div class="rounded-circle d-flex align-items-center justify-content-center"
                                        style="width: 40px; height: 40px; background-color: {{ $bgColor }}; color: {{ $textColor }};">
                                       <i class="ti {{ $icon }} fs-5"></i>
@@ -194,7 +189,7 @@
                     </div>
                 </li>
 
-                <!-- PROFIL USER MODERN -->
+                <!-- PROFIL USER -->
                 <div class="dropdown">
                     @php
                         $role = Auth::user()->role;

@@ -141,13 +141,12 @@
 
 @push('scripts')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
-    <!-- Scripts DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         $(document).ready(function() {
+            // 1. Inisialisasi DataTable
             var table = $('#rcaTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -172,23 +171,29 @@
                         data: 'corrected_o2',
                         name: 'corrected_o2',
                         render: function(data) {
-                            // Highlight kolom Corrected O2
+                            // Highlight kolom Corrected O2 dengan badge
                             return '<span class="badge bg-light-primary text-primary fw-bold fs-3" style="color: #009688 !important; background-color: #e0f2f1 !important;">' + data + '</span>';
                         }
                     },
                     { data: 'raw_value', name: 'raw_value' },
                 ],
-                order: [[1, 'desc']],
+                order: [[0, 'asc']], // Urutkan berdasarkan ID/No
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search records..."
                 }
             });
 
-            // Reload tabel saat Stack diganti
+            // 2. Reload saat ganti Stack
             $('#filterStack').change(function(){
                 table.draw();
             });
+
+            // 3. FITUR AUTO REFRESH (Setiap 3 Detik)
+            setInterval(function() {
+                // Reload data tanpa reset paging
+                table.ajax.reload(null, false);
+            }, 3000);
         });
     </script>
 @endpush

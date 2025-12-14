@@ -142,13 +142,13 @@
 @endsection
 
 @push('scripts')
-    <!-- Script DataTables (Sama seperti sebelumnya) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         $(document).ready(function() {
+            // 1. Inisialisasi DataTable
             var table = $('#logsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -172,16 +172,23 @@
                     { data: 'raw_value', name: 'raw_value' },
                     { data: 'status_sent_dis', name: 'status_sent_dis' },
                 ],
-                order: [[1, 'desc']],
+                order: [[0, 'asc']], // Urutkan berdasarkan kolom pertama (No/ID)
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search records..."
                 }
             });
 
+            // 2. Event Listener: Kalau Dropdown Stack ganti, refresh tabel
             $('#filterStack').change(function(){
                 table.draw();
             });
+
+            // 3. FITUR BARU: AUTO REFRESH TABEL SETIAP 3 DETIK
+            setInterval(function() {
+                // reload(null, false) artinya: reload data tapi jangan reset paging (tetap di halaman yg sedang dilihat)
+                table.ajax.reload(null, false);
+            }, 3000);
         });
     </script>
 @endpush

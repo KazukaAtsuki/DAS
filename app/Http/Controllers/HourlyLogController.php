@@ -15,7 +15,7 @@ class HourlyLogController extends Controller
 
         if ($request->ajax()) {
             // Ambil data HourlyLog
-            $query = HourlyLog::with('sensorConfig')->latest('timestamp');
+            $query = HourlyLog::with('sensorConfig')->orderBy('id', 'desc');
 
             // Filter Stack
             if ($request->has('stack_id') && $request->stack_id != '') {
@@ -39,6 +39,6 @@ class HourlyLogController extends Controller
                 ->make(true);
         }
 
-        return view('hourly_logs.index', compact('stacks'));
+        return view('hourly_avg.index', compact('stacks'));
     }
 }

@@ -14,7 +14,7 @@ class RcaLogController extends Controller
         $stacks = StackConfig::all();
 
         if ($request->ajax()) {
-            $query = RcaLog::with('sensorConfig')->latest('timestamp');
+            $query = RcaLog::with('sensorConfig')->orderBy('id', 'desc');
 
             // Filter by Stack
             if ($request->has('stack_id') && $request->stack_id != '') {
