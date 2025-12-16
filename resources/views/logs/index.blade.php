@@ -115,9 +115,12 @@
                 <button class="btn btn-outline-teal d-flex align-items-center gap-2">
                     <i class="ti ti-adjustments-horizontal"></i> Advanced Filter
                 </button>
-                <button class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4">
+
+                <!-- TOMBOL EXPORT (UPDATED) -->
+                <!-- Menggunakan <a> agar bisa href, id="btnExport" untuk selector JS -->
+                <a href="#" id="btnExport" class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
                     <i class="ti ti-download"></i> Export Data
-                </button>
+                </a>
             </div>
 
             <!-- TABLE -->
@@ -172,21 +175,36 @@
                     { data: 'raw_value', name: 'raw_value' },
                     { data: 'status_sent_dis', name: 'status_sent_dis' },
                 ],
-                order: [[0, 'asc']], // Urutkan berdasarkan kolom pertama (No/ID)
+                order: [[0, 'asc']],
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search records..."
                 }
             });
 
-            // 2. Event Listener: Kalau Dropdown Stack ganti, refresh tabel
+            // --- FUNGSI UPDATE LINK EXPORT ---
+            function updateExportLink() {
+                var stackId = $('#filterStack').val();
+                // Pastikan route 'logs.export' sudah ada di web.php
+                var url = "{{ route('logs.export') }}?stack_id=" + stackId;
+
+                // Ubah atribut href pada tombol export
+                $('#btnExport').attr('href', url);
+            }
+
+            // Jalankan update link saat halaman pertama kali dimuat
+            updateExportLink();
+
+            // 2. Event Listener: Kalau Dropdown Stack ganti
             $('#filterStack').change(function(){
+                // Refresh tabel
                 table.draw();
+                // Update link download excel sesuai stack baru
+                updateExportLink();
             });
 
             // 3. FITUR BARU: AUTO REFRESH TABEL SETIAP 3 DETIK
             setInterval(function() {
-                // reload(null, false) artinya: reload data tapi jangan reset paging (tetap di halaman yg sedang dilihat)
                 table.ajax.reload(null, false);
             }, 3000);
         });

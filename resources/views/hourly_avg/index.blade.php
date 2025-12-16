@@ -11,7 +11,7 @@
 
     /* PENTING: Fix Header Tertutup */
     .page-container {
-        padding-top: 100px; /* Jarak dari atas */
+        padding-top: 100px;
         padding-bottom: 50px;
     }
 
@@ -83,7 +83,6 @@
 @endpush
 
 @section('content')
-<!-- Tambahkan class 'page-container' di sini -->
 <div class="container-fluid page-container">
 
     <!-- HEADER SECTION -->
@@ -121,16 +120,17 @@
                     <i class="ti ti-adjustments-horizontal"></i> Filter Range
                 </button>
 
-                <!-- Group Tombol Export -->
+                <!-- Group Tombol Export (DENGAN LINK YANG SUDAH DIGABUNGKAN) -->
                 <div class="d-flex gap-2">
                     <!-- Tombol SIMPEL -->
-                    <button class="btn btn-simpel d-flex align-items-center gap-2 rounded-pill px-4">
+                    <a href="#" id="btnExportSimpel" class="btn btn-simpel d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
                         <i class="ti ti-file-description"></i> Export SIMPEL
-                    </button>
-                    <!-- Tombol Export Biasa -->
-                    <button class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4">
+                    </a>
+
+                    <!-- Tombol Export Excel -->
+                    <a href="#" id="btnExportExcel" class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
                         <i class="ti ti-download"></i> Export Excel
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -187,7 +187,7 @@
                         name: 'corrected_value',
                         render: function(data) {
                             // Style khusus untuk Corrected Value agar lebih menonjol
-                            return '<span class="fw-bold text-primary">' + data + '</span>';
+                            return '<span class="fw-bold text-primary" style="color: #009688 !important;">' + data + '</span>';
                         }
                     },
                 ],
@@ -198,9 +198,26 @@
                 }
             });
 
+            // --- LOGIKA UPDATE LINK EXPORT (PENTING) ---
+            function updateExportLinks() {
+                var stackId = $('#filterStack').val();
+
+                // Update href tombol Excel
+                var urlExcel = "{{ route('hourly.export.excel') }}?stack_id=" + stackId;
+                $('#btnExportExcel').attr('href', urlExcel);
+
+                // Update href tombol Simpel
+                var urlSimpel = "{{ route('hourly.export.simpel') }}?stack_id=" + stackId;
+                $('#btnExportSimpel').attr('href', urlSimpel);
+            }
+
+            // Jalankan saat pertama load
+            updateExportLinks();
+
             // 2. Reload saat ganti Stack
             $('#filterStack').change(function(){
                 table.draw();
+                updateExportLinks(); // Update link export juga
             });
 
             // 3. FITUR AUTO REFRESH (Setiap 3 Detik)

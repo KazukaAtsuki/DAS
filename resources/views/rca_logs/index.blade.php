@@ -10,7 +10,7 @@
 
     /* PENTING: Fix Header Tertutup */
     .page-container {
-        padding-top: 100px; /* Jarak dari atas agar tidak ketutup header */
+        padding-top: 100px;
         padding-bottom: 50px;
     }
 
@@ -74,7 +74,6 @@
 @endpush
 
 @section('content')
-<!-- Tambahkan class 'page-container' di sini -->
 <div class="container-fluid page-container">
 
     <!-- HEADER SECTION -->
@@ -110,9 +109,12 @@
                 <button class="btn btn-outline-teal d-flex align-items-center gap-2">
                     <i class="ti ti-adjustments-horizontal"></i> Filter Records
                 </button>
-                <button class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4">
+
+                <!-- TOMBOL EXPORT (UPDATED) -->
+                <!-- Ubah jadi <a> agar bisa href -->
+                <a href="#" id="btnExportRca" class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
                     <i class="ti ti-download"></i> Export RCA
-                </button>
+                </a>
             </div>
 
             <!-- TABLE -->
@@ -141,12 +143,13 @@
 
 @push('scripts')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+    <!-- Scripts DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            // 1. Inisialisasi DataTable
             var table = $('#rcaTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -171,27 +174,38 @@
                         data: 'corrected_o2',
                         name: 'corrected_o2',
                         render: function(data) {
-                            // Highlight kolom Corrected O2 dengan badge
                             return '<span class="badge bg-light-primary text-primary fw-bold fs-3" style="color: #009688 !important; background-color: #e0f2f1 !important;">' + data + '</span>';
                         }
                     },
                     { data: 'raw_value', name: 'raw_value' },
                 ],
-                order: [[0, 'asc']], // Urutkan berdasarkan ID/No
+                order: [[0, 'asc']], // Urutkan berdasarkan ID
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search records..."
                 }
             });
 
-            // 2. Reload saat ganti Stack
+            // --- FUNGSI UPDATE LINK EXPORT ---
+            function updateExportLink() {
+                var stackId = $('#filterStack').val();
+                // Arahkan ke route export
+                var url = "{{ route('rca.export') }}?stack_id=" + stackId;
+
+                $('#btnExportRca').attr('href', url);
+            }
+
+            // Jalankan saat load pertama
+            updateExportLink();
+
+            // Reload tabel & link export saat Stack diganti
             $('#filterStack').change(function(){
                 table.draw();
+                updateExportLink();
             });
 
-            // 3. FITUR AUTO REFRESH (Setiap 3 Detik)
+            // Auto Refresh 3 Detik
             setInterval(function() {
-                // Reload data tanpa reset paging
                 table.ajax.reload(null, false);
             }, 3000);
         });

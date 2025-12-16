@@ -6,25 +6,25 @@ use App\Models\DasLog;
 use App\Models\StackConfig;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Exports\DasLogExport;           // <--- JANGAN LUPA IMPORT INI
+use Maatwebsite\Excel\Facades\Excel;    // <--- JANGAN LUPA IMPORT INI
 
 class DasLogController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil semua stack untuk dropdown filter di pojok kanan
+        // ... (Kode index biarkan saja seperti sebelumnya) ...
         $stacks = StackConfig::all();
 
         if ($request->ajax()) {
-            // Query dasar: ambil data log beserta nama sensornya
             $query = DasLog::with('sensorConfig')->orderBy('id', 'desc');
 
-            // FILTER: Jika user memilih Stack tertentu
             if ($request->has('stack_id') && $request->stack_id != '') {
                 $query->where('stack_config_id', $request->stack_id);
             }
 
             return DataTables::of($query)
-                ->addIndexColumn() // Untuk kolom #ID (No urut)
+                ->addIndexColumn()
                 ->editColumn('timestamp', function($row){
                     return \Carbon\Carbon::parse($row->timestamp)->format('Y-m-d H:i:s');
                 })
@@ -50,5 +50,14 @@ class DasLogController extends Controller
         }
 
         return view('logs.index', compact('stacks'));
+    }
+
+    // --- FUNGSI EXPORT BARU ---
+    public function exportExcel(Request $request)
+    {
+        $stackId = $request->query('stack_id');
+        $fileName = 'DAS_Logs_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        return Excel::download(new DasLogExport($stackId), $fileName);
     }
 }

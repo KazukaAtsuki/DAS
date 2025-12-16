@@ -52,6 +52,16 @@ Route::middleware(['auth'])->group(function () {
     // Route Hourly Logs
     Route::get('/hourly-avg', [HourlyLogController::class, 'index'])->name('hourly.index');
 
+    // Route Export Baru
+    Route::get('/hourly-avg/export-excel', [HourlyLogController::class, 'exportExcel'])->name('hourly.export.excel');
+    Route::get('/hourly-avg/export-simpel', [HourlyLogController::class, 'exportSimpel'])->name('hourly.export.simpel');
+
+     // Route Export Logs
+     Route::get('/logs-data/export', [DasLogController::class, 'exportExcel'])->name('logs.export');
+
+      // Route Export RCA
+    Route::get('/rca-records/export', [RcaLogController::class, 'exportExcel'])->name('rca.export');
+
     // Route Profil
     Route::get('/my-profile', [AuthController::class, 'profile'])->name('my-profile');
     Route::put('/my-profile', [AuthController::class, 'updateProfile'])->name('my-profile.update');
