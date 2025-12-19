@@ -34,7 +34,7 @@ class AuthController extends Controller
             // --- CATAT LOG LOGIN ---
             ActivityLog::record('LOGIN', 'User has logged in to the system.');
 
-            return redirect()->intended('/')->with('success', 'Login Berhasil! Selamat Datang.');
+            return redirect()->intended('/dashboard')->with('success', 'Login Berhasil! Selamat Datang.');
         }
 
         return back()->withErrors([

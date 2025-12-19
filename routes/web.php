@@ -15,13 +15,17 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\HourlyLogController;
 
-
-
 /*
 |--------------------------------------------------------------------------
-| 1. Route GUEST (Hanya bisa diakses kalau BELUM Login)
+| 1. Route GUEST (Bisa diakses publik / belum login)
 |--------------------------------------------------------------------------
 */
+
+// --- MODIFIKASI: Route Halaman Depan (Landing Page) ---
+Route::get('/', function () {
+    return view('welcome');
+});
+
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -34,59 +38,48 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 Route::middleware(['auth'])->group(function () {
 
-    Route::middleware(['auth'])->group(function () {
+    // --- MODIFIKASI DASHBOARD ---
+    // Sekarang Dashboard ada di '/dashboard', bukan '/'
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        // Halaman Dashboard Utama
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+    // Route AJAX Dashboard
+    Route::get('/dashboard/live', [DashboardController::class, 'getLiveDashboard'])->name('dashboard.live');
+    Route::post('/dashboard/toggle-rca', [DashboardController::class, 'toggleRca'])->name('dashboard.toggle-rca');
 
-      // PENTING: Route untuk AJAX Live Update (Tiap 2 Detik)
-      Route::get('/dashboard/live', [DashboardController::class, 'getLiveDashboard'])->name('dashboard.live');
 
-        // Route Toggle RCA (BARU)
-        Route::post('/dashboard/toggle-rca', [DashboardController::class, 'toggleRca'])
-        ->name('dashboard.toggle-rca')
-        ->middleware('auth');
+    // --- ROUTE FITUR LAINNYA (TIDAK DIUBAH) ---
 
-    });
-
-    // Route Hourly Logs
+    // Route Hourly Logs & Export
     Route::get('/hourly-avg', [HourlyLogController::class, 'index'])->name('hourly.index');
-
-    // Route Export Baru
     Route::get('/hourly-avg/export-excel', [HourlyLogController::class, 'exportExcel'])->name('hourly.export.excel');
     Route::get('/hourly-avg/export-simpel', [HourlyLogController::class, 'exportSimpel'])->name('hourly.export.simpel');
 
-     // Route Export Logs
-     Route::get('/logs-data/export', [DasLogController::class, 'exportExcel'])->name('logs.export');
+    // Route Export Logs
+    Route::get('/logs-data/export', [DasLogController::class, 'exportExcel'])->name('logs.export');
 
-      // Route Export RCA
+    // Route Export RCA
     Route::get('/rca-records/export', [RcaLogController::class, 'exportExcel'])->name('rca.export');
 
-    // Route Profil
+    // Route Profil & Security
     Route::get('/my-profile', [AuthController::class, 'profile'])->name('my-profile');
     Route::put('/my-profile', [AuthController::class, 'updateProfile'])->name('my-profile.update');
-
-    // Route Security
     Route::get('/security', [AuthController::class, 'security'])->name('security');
     Route::put('/security', [AuthController::class, 'updatePassword'])->name('security.update');
 
     // Route Activity Logs
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
-    // Sensor Config
+    // Resources
     Route::resource('sensor-config', SensorConfigController::class);
-
-    // References
     Route::resource('references', ReferenceController::class);
 
-    // RCA Records
+    // Pages Index
     Route::get('/rca-records', [RcaLogController::class, 'index'])->name('rca.index');
-
-    // DAS Logs
     Route::get('/logs-data', [DasLogController::class, 'index'])->name('logs.index');
 
-    // Hourly Averages
-    Route::get('/hourly-avg', [HourlyAverageController::class, 'index'])->name('hourly.index');
+    // Note: Anda punya 2 route bernama 'hourly.index' (HourlyLogController & HourlyAverageController).
+    // Pastikan pakai salah satu saja. Di sini saya biarkan sesuai code Anda.
+    // Route::get('/hourly-avg', [HourlyAverageController::class, 'index'])->name('hourly.index');
 
     // Master Data
     Route::resource('users', UserController::class);

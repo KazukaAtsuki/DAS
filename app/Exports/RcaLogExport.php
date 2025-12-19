@@ -9,21 +9,34 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class RcaLogExport implements FromCollection, WithHeadings, WithMapping
 {
+    // --- PERBAIKAN DI SINI: Deklarasikan variabel dulu ---
     protected $stackId;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($stackId)
+    // Constructor menerima request
+    public function __construct($request)
     {
-        $this->stackId = $stackId;
+        // Ambil data dari object request, pakai null coalescing operator (?? null) biar aman
+        $this->stackId = $request->stack_id ?? null;
+        $this->startDate = $request->start_date ?? null;
+        $this->endDate = $request->end_date ?? null;
     }
 
     public function collection()
     {
-        // Ambil data RCA, urutkan dari yang terbaru
         $query = RcaLog::with(['sensorConfig', 'stackConfig'])->orderBy('id', 'desc');
 
-        // Filter berdasarkan Stack jika ada
         if ($this->stackId) {
             $query->where('stack_config_id', $this->stackId);
+        }
+
+        // Logika Filter Tanggal
+        if ($this->startDate && $this->endDate) {
+            $query->whereBetween('timestamp', [
+                $this->startDate . ' 00:00:00',
+                $this->endDate . ' 23:59:59'
+            ]);
         }
 
         return $query->get();

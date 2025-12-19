@@ -10,19 +10,31 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class HourlyLogExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $stackId;
+    protected $startDate;
+    protected $endDate;
 
-    public function __construct($stackId)
+    public function __construct($request)
     {
-        $this->stackId = $stackId;
+        // Ambil dari request
+        $this->stackId = $request->stack_id ?? null;
+        $this->startDate = $request->start_date ?? null;
+        $this->endDate = $request->end_date ?? null;
     }
 
     public function collection()
     {
-        // Ambil data sesuai Stack yang dipilih
         $query = HourlyLog::with(['sensorConfig', 'stackConfig'])->latest('timestamp');
 
         if ($this->stackId) {
             $query->where('stack_config_id', $this->stackId);
+        }
+
+        // Filter Tanggal di Excel
+        if ($this->startDate && $this->endDate) {
+            $query->whereBetween('timestamp', [
+                $this->startDate . ' 00:00:00',
+                $this->endDate . ' 23:59:59'
+            ]);
         }
 
         return $query->get();
@@ -30,14 +42,7 @@ class HourlyLogExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return [
-            'ID',
-            'Timestamp',
-            'Stack Name',
-            'Sensor Parameter',
-            'Measured Value',
-            'Corrected Value',
-        ];
+        return [ 'ID', 'Timestamp', 'Stack Name', 'Sensor Parameter', 'Measured Value', 'Corrected Value' ];
     }
 
     public function map($log): array

@@ -19,8 +19,18 @@ class DasLogController extends Controller
         if ($request->ajax()) {
             $query = DasLog::with('sensorConfig')->orderBy('id', 'desc');
 
+            // 1. FILTER STACK (Existing)
             if ($request->has('stack_id') && $request->stack_id != '') {
                 $query->where('stack_config_id', $request->stack_id);
+            }
+
+            // 2. FILTER TANGGAL (BARU)
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                // Tambahkan jam 00:00:00 dan 23:59:59 agar seharian penuh terambil
+                $start = $request->start_date . ' 00:00:00';
+                $end   = $request->end_date . ' 23:59:59';
+
+                $query->whereBetween('timestamp', [$start, $end]);
             }
 
             return DataTables::of($query)
@@ -53,11 +63,11 @@ class DasLogController extends Controller
     }
 
     // --- FUNGSI EXPORT BARU ---
-    public function exportExcel(Request $request)
+   public function exportExcel(Request $request)
     {
-        $stackId = $request->query('stack_id');
         $fileName = 'DAS_Logs_' . date('Y-m-d_H-i-s') . '.xlsx';
 
-        return Excel::download(new DasLogExport($stackId), $fileName);
+        // Kirim seluruh $request (isinya stack_id, start_date, end_date)
+        return Excel::download(new DasLogExport($request), $fileName);
     }
 }

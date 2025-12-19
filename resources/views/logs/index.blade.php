@@ -2,88 +2,39 @@
 
 @push('styles')
 <style>
-    /* --- CUSTOM CSS FOR LOGS PAGE --- */
-    :root {
-        --das-teal: #009688;
-        --das-dark: #1A1A1A;
-    }
+    :root { --das-teal: #009688; --das-dark: #1A1A1A; }
+    .page-container { padding-top: 100px; padding-bottom: 50px; }
 
-    /* PENTING: Fix Header Tertutup */
-    .page-container {
-        padding-top: 100px; /* Jarak dari atas */
-        padding-bottom: 50px;
-    }
+    .card-modern { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
 
-    /* Card Styling */
-    .card-modern {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
-    }
-
-    /* Table Header */
+    /* Table Styling */
     .table-modern thead th {
-        background-color: #f8f9fa;
-        color: var(--das-dark);
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        border-bottom: 2px solid var(--das-teal);
-        padding-top: 15px;
-        padding-bottom: 15px;
+        background-color: #f8f9fa; color: var(--das-dark);
+        font-weight: 700; text-transform: uppercase; font-size: 0.85rem;
+        border-bottom: 2px solid var(--das-teal); padding: 15px;
     }
 
-    /* Buttons */
-    .btn-teal {
-        background-color: var(--das-teal);
-        color: white;
-        border: none;
+    /* Input Date Modern */
+    .input-date {
+        border: 2px solid #e0e0e0; border-radius: 8px;
+        padding: 8px 12px; font-weight: 600; color: var(--das-dark);
     }
-    .btn-teal:hover {
-        background-color: #00796b;
-        color: white;
-        box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
-    }
+    .input-date:focus { border-color: var(--das-teal); outline: none; }
 
-    .btn-outline-teal {
-        border: 1px solid var(--das-teal);
-        color: var(--das-teal);
-        background: transparent;
-    }
-    .btn-outline-teal:hover {
-        background-color: var(--das-teal);
-        color: white;
-    }
+    .btn-teal { background-color: var(--das-teal); color: white; border: none; }
+    .btn-teal:hover { background-color: #00796b; color: white; }
 
-    /* Custom DataTables Pagination */
-    .page-item.active .page-link {
-        background-color: var(--das-teal) !important;
-        border-color: var(--das-teal) !important;
-    }
-    .page-link {
-        color: var(--das-teal) !important;
-    }
+    .stack-select { border: 2px solid #e0e0e0; border-radius: 8px; font-weight: 600; }
 
-    /* Select Filter Styling */
-    .stack-select {
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-weight: 600;
-        color: var(--das-dark);
-    }
-    .stack-select:focus {
-        border-color: var(--das-teal);
-        box-shadow: none;
-    }
+    .page-item.active .page-link { background-color: var(--das-teal) !important; border-color: var(--das-teal) !important; }
+    .page-link { color: var(--das-teal) !important; }
 </style>
 @endpush
 
 @section('content')
-<!-- Tambahkan class 'page-container' di sini -->
 <div class="container-fluid page-container">
 
-    <!-- HEADER SECTION -->
+    <!-- HEADER -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center mb-3 mb-md-0">
             <div class="bg-light-primary p-2 rounded-circle me-3 text-primary">
@@ -94,10 +45,9 @@
                 <small class="text-muted">Real-time monitoring history from sensors.</small>
             </div>
         </div>
-
-        <!-- STACK FILTER DROPDOWN -->
+        <!-- Stack Filter -->
         <div class="d-flex align-items-center">
-            <span class="fw-bold me-2 text-muted"><i class="ti ti-filter"></i> Select Stack:</span>
+            <span class="fw-bold me-2 text-muted"><i class="ti ti-filter"></i> Stack:</span>
             <select id="filterStack" class="form-select stack-select w-auto" style="min-width: 200px;">
                 @foreach($stacks as $stack)
                     <option value="{{ $stack->id }}">{{ $stack->stack_name }}</option>
@@ -110,17 +60,34 @@
     <div class="card card-modern">
         <div class="card-body p-4">
 
-            <!-- ACTION TOOLBAR -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <button class="btn btn-outline-teal d-flex align-items-center gap-2">
-                    <i class="ti ti-adjustments-horizontal"></i> Advanced Filter
-                </button>
+            <!-- ACTION TOOLBAR (FILTER TANGGAL) -->
+            <div class="row align-items-center mb-4 g-2">
 
-                <!-- TOMBOL EXPORT (UPDATED) -->
-                <!-- Menggunakan <a> agar bisa href, id="btnExport" untuk selector JS -->
-                <a href="#" id="btnExport" class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
-                    <i class="ti ti-download"></i> Export Data
-                </a>
+                <!-- Filter Tanggal -->
+                <div class="col-md-8 d-flex align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted fw-bold me-2 small text-uppercase">From:</span>
+                        <input type="date" id="startDate" class="form-control input-date" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted fw-bold me-2 small text-uppercase">To:</span>
+                        <input type="date" id="endDate" class="form-control input-date" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <button id="btnFilterDate" class="btn btn-outline-dark d-flex align-items-center gap-1 fw-bold">
+                        <i class="ti ti-search"></i> Filter
+                    </button>
+                    <!-- Tombol Reset -->
+                    <button id="btnResetDate" class="btn btn-light d-flex align-items-center gap-1 text-muted">
+                        <i class="ti ti-rotate"></i> Reset
+                    </button>
+                </div>
+
+                <!-- Export Button -->
+                <div class="col-md-4 text-end">
+                    <a href="#" id="btnExport" class="btn btn-teal d-inline-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none shadow-sm">
+                        <i class="ti ti-download"></i> Export Data
+                    </a>
+                </div>
             </div>
 
             <!-- TABLE -->
@@ -128,12 +95,12 @@
                 <table class="table align-middle table-hover table-modern" id="logsTable" style="width:100%">
                     <thead>
                         <tr>
-                            <th class="border-bottom-0"><i class="ti ti-hash me-1"></i> ID</th>
-                            <th class="border-bottom-0"><i class="ti ti-clock me-1"></i> Timestamp</th>
-                            <th class="border-bottom-0"><i class="ti ti-broadcast me-1"></i> Sensor</th>
-                            <th class="border-bottom-0"><i class="ti ti-ruler me-1"></i> Measured</th>
-                            <th class="border-bottom-0"><i class="ti ti-binary me-1"></i> Raw</th>
-                            <th class="border-bottom-0"><i class="ti ti-server me-1"></i> Status DIS</th>
+                            <th class="border-bottom-0">#ID</th>
+                            <th class="border-bottom-0">Timestamp</th>
+                            <th class="border-bottom-0">Sensor</th>
+                            <th class="border-bottom-0">Measured</th>
+                            <th class="border-bottom-0">Raw</th>
+                            <th class="border-bottom-0">Status DIS</th>
                         </tr>
                     </thead>
                     <tbody class="text-dark fw-bold text-muted"></tbody>
@@ -151,7 +118,6 @@
 
     <script>
         $(document).ready(function() {
-            // 1. Inisialisasi DataTable
             var table = $('#logsTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -159,54 +125,58 @@
                     url: "{{ route('logs.index') }}",
                     data: function (d) {
                         d.stack_id = $('#filterStack').val();
+                        // Kirim Data Tanggal ke Controller
+                        d.start_date = $('#startDate').val();
+                        d.end_date = $('#endDate').val();
                     }
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'timestamp', name: 'timestamp' },
-                    {
-                        data: 'sensor_name',
-                        name: 'sensorConfig.parameter_name',
-                        render: function(data) {
-                            return '<span class="fw-bolder text-dark">' + data + '</span>';
-                        }
-                    },
+                    { data: 'sensor_name', name: 'sensorConfig.parameter_name', render: function(data) { return '<span class="fw-bolder text-dark">' + data + '</span>'; } },
                     { data: 'measured_value', name: 'measured_value' },
                     { data: 'raw_value', name: 'raw_value' },
                     { data: 'status_sent_dis', name: 'status_sent_dis' },
                 ],
                 order: [[0, 'asc']],
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search records..."
-                }
+                language: { search: "_INPUT_", searchPlaceholder: "Search records..." }
             });
 
-            // --- FUNGSI UPDATE LINK EXPORT ---
+            // Update Link Export (Termasuk Tanggal)
             function updateExportLink() {
                 var stackId = $('#filterStack').val();
-                // Pastikan route 'logs.export' sudah ada di web.php
-                var url = "{{ route('logs.export') }}?stack_id=" + stackId;
+                var start = $('#startDate').val();
+                var end = $('#endDate').val();
 
-                // Ubah atribut href pada tombol export
+                // Tambahkan parameter tanggal ke URL Export
+                var url = "{{ route('logs.export') }}?stack_id=" + stackId + "&start_date=" + start + "&end_date=" + end;
                 $('#btnExport').attr('href', url);
             }
 
-            // Jalankan update link saat halaman pertama kali dimuat
             updateExportLink();
 
-            // 2. Event Listener: Kalau Dropdown Stack ganti
+            // Event: Ganti Stack
             $('#filterStack').change(function(){
-                // Refresh tabel
                 table.draw();
-                // Update link download excel sesuai stack baru
                 updateExportLink();
             });
 
-            // 3. FITUR BARU: AUTO REFRESH TABEL SETIAP 3 DETIK
-            setInterval(function() {
-                table.ajax.reload(null, false);
-            }, 3000);
+            // Event: Klik Tombol Filter Tanggal
+            $('#btnFilterDate').click(function(){
+                table.draw(); // Reload tabel dengan tanggal baru
+                updateExportLink();
+            });
+
+            // Event: Klik Reset
+            $('#btnResetDate').click(function(){
+                // Kembalikan ke tanggal hari ini (atau kosongkan)
+                // $('#startDate').val('');
+                // $('#endDate').val('');
+
+                // Reload tabel
+                table.draw();
+                updateExportLink();
+            });
         });
     </script>
 @endpush

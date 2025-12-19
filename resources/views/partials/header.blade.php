@@ -189,47 +189,43 @@
                     </div>
                 </li>
 
-                <!-- PROFIL USER -->
+                <!-- PROFIL USER (TEXT ONLY) -->
                 <div class="dropdown">
-                    @php
-                        $role = Auth::user()->role;
-                        $avatar = ($role === 'Administrator') ? 'user-1.jpg' : 'user-2.jpg';
-                    @endphp
-
-                    <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-1 pe-3 rounded-pill bg-white hover-bg-light transition"
+                    <!-- Trigger Profil -->
+                    <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-2 rounded-3 bg-light hover-bg-light transition"
                        href="javascript:void(0)" id="dropProfile" data-bs-toggle="dropdown" aria-expanded="false"
-                       style="transition: all 0.3s; border: 1px solid transparent;">
+                       style="transition: all 0.3s; background-color: #f8f9fa;">
 
-                        <div class="position-relative">
-                            <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
-                                 alt="" width="38" height="38"
-                                 class="rounded-circle" style="object-fit: cover;">
-                            <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
-                                  style="width: 10px; height: 10px; border-width: 2px !important;"></span>
+                        <!-- ICON USER SEBAGAI PENGGANTI FOTO -->
+                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;">
+                            <i class="ti ti-user fs-5 text-dark"></i>
                         </div>
 
-                        <div class="d-none d-md-block text-start lh-sm ms-1">
+                        <div class="d-none d-md-block text-start lh-sm me-2">
                             <p class="mb-0 fw-bold text-dark" style="font-size: 13px;">{{ Auth::user()->name }}</p>
                             <small class="text-muted" style="font-size: 11px;">{{ Auth::user()->role }}</small>
                         </div>
 
-                        <i class="ti ti-chevron-down text-muted ms-1" style="font-size: 12px;"></i>
+                        <i class="ti ti-chevron-down text-muted" style="font-size: 10px;"></i>
                     </a>
 
+                    <!-- Isi Dropdown Profil -->
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up border-0 shadow-lg mt-3 p-0 rounded-4 overflow-hidden"
                          aria-labelledby="dropProfile" style="min-width: 280px;">
 
+                        <!-- Header Dropdown (Tanpa Foto Besar) -->
                         <div class="p-4 bg-light-primary bg-opacity-50 text-center border-bottom border-light">
-                            <div class="position-relative d-inline-block mb-2">
-                                <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
-                                     alt="" width="70" height="70" class="rounded-circle shadow-sm border border-2 border-white">
-                                <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
-                                      style="width: 16px; height: 16px;"></span>
-                            </div>
+                             <!-- Ganti Foto dengan Icon User Besar -->
+                             <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2 text-primary"
+                                  style="width: 60px; height: 60px;">
+                                <i class="ti ti-user fs-1"></i>
+                             </div>
+
                             <h5 class="fw-bold mb-0 text-dark">{{ Auth::user()->name }}</h5>
                             <span class="text-muted fs-3">{{ Auth::user()->email }}</span>
                         </div>
 
+                        <!-- Menu Actions -->
                         <div class="p-2">
                             <a href="{{ route('my-profile') }}" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 transition hover-bg-light">
                                 <div class="bg-light p-2 rounded-circle text-primary"><i class="ti ti-user fs-5"></i></div>

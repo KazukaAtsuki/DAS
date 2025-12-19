@@ -2,82 +2,31 @@
 
 @push('styles')
 <style>
-    /* --- CUSTOM CSS FOR HOURLY PAGE --- */
-    :root {
-        --das-teal: #009688;
-        --das-dark: #1A1A1A;
-        --das-blue: #3b82f6;
-    }
+    :root { --das-teal: #009688; --das-dark: #1A1A1A; --das-blue: #3b82f6; }
 
-    /* PENTING: Fix Header Tertutup */
-    .page-container {
-        padding-top: 100px;
-        padding-bottom: 50px;
-    }
+    .page-container { padding-top: 100px; padding-bottom: 50px; }
 
-    .card-modern {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
+    .card-modern { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
 
     .table-modern thead th {
-        background-color: #f8f9fa;
-        color: var(--das-dark);
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        border-bottom: 2px solid var(--das-teal);
+        background-color: #f8f9fa; color: var(--das-dark); font-weight: 700;
+        text-transform: uppercase; font-size: 0.85rem; border-bottom: 2px solid var(--das-teal);
         padding: 15px;
     }
 
-    /* Buttons */
-    .btn-teal {
-        background-color: var(--das-teal);
-        color: white;
-        border: none;
-    }
-    .btn-teal:hover {
-        background-color: #00796b;
-        color: white;
-        box-shadow: 0 4px 12px rgba(0, 150, 136, 0.3);
-    }
+    .btn-teal { background-color: var(--das-teal); color: white; border: none; }
+    .btn-teal:hover { background-color: #00796b; color: white; }
 
-    .btn-outline-teal {
-        border: 1px solid var(--das-teal);
-        color: var(--das-teal);
-        background: transparent;
-    }
-    .btn-outline-teal:hover {
-        background-color: var(--das-teal);
-        color: white;
-    }
+    .btn-outline-teal { border: 1px solid var(--das-teal); color: var(--das-teal); background: transparent; }
+    .btn-outline-teal:hover { background-color: var(--das-teal); color: white; }
 
-    /* Tombol Spesial SIMPEL */
-    .btn-simpel {
-        background: linear-gradient(45deg, #2196F3, #1976D2);
-        color: white;
-        border: none;
-        box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
-    }
-    .btn-simpel:hover {
-        background: linear-gradient(45deg, #1976D2, #1565C0);
-        color: white;
-        transform: translateY(-1px);
-    }
+    .btn-simpel { background: linear-gradient(45deg, #2196F3, #1976D2); color: white; border: none; }
+    .btn-simpel:hover { background: linear-gradient(45deg, #1976D2, #1565C0); color: white; transform: translateY(-1px); }
 
-    .stack-select {
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-weight: 600;
-        color: var(--das-dark);
-    }
+    .stack-select { border: 2px solid #e0e0e0; border-radius: 8px; font-weight: 600; color: var(--das-dark); }
     .stack-select:focus { border-color: var(--das-teal); box-shadow: none; }
 
-    .page-item.active .page-link {
-        background-color: var(--das-teal) !important;
-        border-color: var(--das-teal) !important;
-    }
+    .page-item.active .page-link { background-color: var(--das-teal) !important; border-color: var(--das-teal) !important; }
     .page-link { color: var(--das-teal) !important; }
 </style>
 @endpush
@@ -88,7 +37,6 @@
     <!-- HEADER SECTION -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center mb-3 mb-md-0">
-            <!-- Ikon Jam (Hourly) -->
             <div class="bg-light-primary p-2 rounded-circle me-3 text-primary">
                 <i class="ti ti-clock-hour-4 fs-1" style="color: #009688;"></i>
             </div>
@@ -97,8 +45,6 @@
                 <small class="text-muted">1-Hour aggregated measurement data.</small>
             </div>
         </div>
-
-        <!-- STACK FILTER -->
         <div class="d-flex align-items-center">
             <span class="fw-bold me-2 text-muted"><i class="ti ti-filter"></i> Select Stack:</span>
             <select id="filterStack" class="form-select stack-select w-auto" style="min-width: 200px;">
@@ -113,23 +59,28 @@
     <div class="card card-modern">
         <div class="card-body p-4">
 
-            <!-- ACTION TOOLBAR -->
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
+            <!-- ACTION TOOLBAR (FILTER TANGGAL) -->
+            <div class="row align-items-center mb-4 g-2">
+                <div class="col-md-8 d-flex align-items-center flex-wrap gap-2">
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted fw-bold me-2 small text-uppercase">From:</span>
+                        <input type="date" id="startDate" class="form-control" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted fw-bold me-2 small text-uppercase">To:</span>
+                        <input type="date" id="endDate" class="form-control" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <button id="btnFilterDate" class="btn btn-outline-dark fw-bold"><i class="ti ti-search"></i> Filter</button>
+                    <button id="btnResetDate" class="btn btn-light text-muted"><i class="ti ti-rotate"></i> Reset</button>
+                </div>
 
-                <button class="btn btn-outline-teal d-flex align-items-center gap-2">
-                    <i class="ti ti-adjustments-horizontal"></i> Filter Range
-                </button>
-
-                <!-- Group Tombol Export (DENGAN LINK YANG SUDAH DIGABUNGKAN) -->
-                <div class="d-flex gap-2">
-                    <!-- Tombol SIMPEL -->
-                    <a href="#" id="btnExportSimpel" class="btn btn-simpel d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
-                        <i class="ti ti-file-description"></i> Export SIMPEL
+                <!-- TOMBOL EXPORT -->
+                <div class="col-md-4 text-end d-flex gap-2 justify-content-end">
+                    <a href="#" id="btnExportSimpel" class="btn btn-simpel rounded-pill px-3 text-decoration-none shadow-sm font-sm">
+                        <i class="ti ti-file-description"></i> SIMPEL
                     </a>
-
-                    <!-- Tombol Export Excel -->
-                    <a href="#" id="btnExportExcel" class="btn btn-teal d-flex align-items-center gap-2 rounded-pill px-4 text-decoration-none">
-                        <i class="ti ti-download"></i> Export Excel
+                    <a href="#" id="btnExportExcel" class="btn btn-teal rounded-pill px-3 text-decoration-none shadow-sm font-sm">
+                        <i class="ti ti-download"></i> Excel
                     </a>
                 </div>
             </div>
@@ -161,7 +112,6 @@
 
     <script>
         $(document).ready(function() {
-            // 1. Inisialisasi DataTable
             var table = $('#hourlyTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -169,62 +119,54 @@
                     url: "{{ route('hourly.index') }}",
                     data: function (d) {
                         d.stack_id = $('#filterStack').val();
+                        // Kirim data tanggal ke controller
+                        d.start_date = $('#startDate').val();
+                        d.end_date = $('#endDate').val();
                     }
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'timestamp', name: 'timestamp' },
-                    {
-                        data: 'sensor_name',
-                        name: 'sensorConfig.parameter_name',
-                        render: function(data) {
-                            return '<span class="fw-bolder text-dark">' + data + '</span>';
-                        }
-                    },
+                    { data: 'sensor_name', name: 'sensorConfig.parameter_name', render: function(data) { return '<span class="fw-bolder text-dark">' + data + '</span>'; } },
                     { data: 'measured_value', name: 'measured_value' },
-                    {
-                        data: 'corrected_value',
-                        name: 'corrected_value',
-                        render: function(data) {
-                            // Style khusus untuk Corrected Value agar lebih menonjol
-                            return '<span class="fw-bold text-primary" style="color: #009688 !important;">' + data + '</span>';
-                        }
-                    },
+                    { data: 'corrected_value', name: 'corrected_value', render: function(data) { return '<span class="fw-bold text-primary" style="color: #009688 !important;">' + data + '</span>'; } },
                 ],
-                order: [[0, 'asc']], // Urutkan berdasarkan No/ID
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search hourly data..."
-                }
+                order: [[0, 'asc']],
+                language: { search: "_INPUT_", searchPlaceholder: "Search hourly data..." }
             });
 
-            // --- LOGIKA UPDATE LINK EXPORT (PENTING) ---
-            function updateExportLinks() {
+            // Update Link Export (Dynamic)
+            function updateExportLink() {
                 var stackId = $('#filterStack').val();
+                var start = $('#startDate').val();
+                var end = $('#endDate').val();
 
-                // Update href tombol Excel
-                var urlExcel = "{{ route('hourly.export.excel') }}?stack_id=" + stackId;
-                $('#btnExportExcel').attr('href', urlExcel);
+                // Buat Query String
+                var query = "?stack_id=" + stackId + "&start_date=" + start + "&end_date=" + end;
 
-                // Update href tombol Simpel
-                var urlSimpel = "{{ route('hourly.export.simpel') }}?stack_id=" + stackId;
-                $('#btnExportSimpel').attr('href', urlSimpel);
+                $('#btnExportExcel').attr('href', "{{ route('hourly.export.excel') }}" + query);
+                $('#btnExportSimpel').attr('href', "{{ route('hourly.export.simpel') }}" + query);
             }
 
-            // Jalankan saat pertama load
-            updateExportLinks();
+            updateExportLink();
 
-            // 2. Reload saat ganti Stack
+            // Event Listeners
             $('#filterStack').change(function(){
                 table.draw();
-                updateExportLinks(); // Update link export juga
+                updateExportLink();
             });
 
-            // 3. FITUR AUTO REFRESH (Setiap 3 Detik)
-            setInterval(function() {
-                // Reload data tanpa reset paging
-                table.ajax.reload(null, false);
-            }, 3000);
+            $('#btnFilterDate').click(function(){
+                table.draw();
+                updateExportLink();
+            });
+
+            $('#btnResetDate').click(function(){
+                // Reset tanggal ke hari ini (opsional)
+                // $('#startDate').val(''); $('#endDate').val('');
+                table.draw();
+                updateExportLink();
+            });
         });
     </script>
 @endpush
