@@ -95,12 +95,14 @@
                     <li class="nav-item">
                         <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('logs.*') ? 'active' : '' }}" href="{{ route('logs.index') }}">Logs Data</a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('rca.*') ? 'active' : '' }}" href="{{ route('rca.index') }}">RCA Records</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('hourly.*') ? 'active' : '' }}" href="{{ route('hourly.index') }}">Hourly Avg</a>
                     </li>
+
+
 
                     <li class="nav-item dropdown">
                         <a class="nav-link nav-custom text-uppercase dropdown-toggle {{ request()->is('master*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -139,7 +141,7 @@
                       </style>
                       <div class="position-relative d-inline-block">
                           <i class="ti ti-bell-ringing" style="font-size: 1.3rem; color: #5a6a85; transition: color 0.2s;"></i>
-                          @if(count($notifications) > 0)
+                          @if(isset($notifications) && count((array)$notifications) > 0)
                             <span class="position-absolute bg-primary rounded-circle border border-white"
                                   style="width: 8px; height: 8px; top: 0; right: 0;">
                             </span>
@@ -150,7 +152,7 @@
                     <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up shadow-lg border-0 rounded-4 mt-2" aria-labelledby="drop2" style="min-width: 320px;">
                       <div class="d-flex align-items-center justify-content-between py-3 px-4 border-bottom">
                         <h5 class="mb-0 fs-4 fw-bold text-dark">User Logs</h5>
-                        <span class="badge bg-light-primary text-primary rounded-pill px-3 py-1 fs-2 fw-semibold">{{ count($notifications) }} New</span>
+                        <span class="badge bg-light-primary text-primary rounded-pill px-3 py-1 fs-2 fw-semibold">{{ isset($notifications) ? count($notifications) : 0 }} New</span>
                       </div>
                       <div class="message-body" data-simplebar style="max-height: 350px; overflow-y: auto;">
                         @forelse($notifications as $log)

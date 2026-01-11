@@ -68,6 +68,17 @@
                                     </div>
                                 </div>
 
+                                <!-- TAMBAHAN: HIGH LIMIT (BAKU MUTU) -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-danger small">High Limit (Baku Mutu)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 border-danger text-danger"><i class="ti ti-alert-triangle"></i></span>
+                                        <input type="number" step="0.01" name="limit_value" class="form-control border-start-0 bg-light ps-0 border-danger" placeholder="e.g. 50.00">
+                                    </div>
+                                    <div class="form-text text-danger small">If value exceeds this limit, dashboard will show alarm.</div>
+                                </div>
+                                <!-- END TAMBAHAN -->
+
                                 <!-- Analyzer IP -->
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark small">Analyzer IP Address</label>

@@ -48,7 +48,7 @@ class HourlyLogController extends Controller
                 ->make(true);
         }
 
-        return view('hourly_logs.index', compact('stacks'));
+        return view('hourly_avg.index', compact('stacks'));
     }
 
     // --- UPDATE EXPORT EXCEL ---

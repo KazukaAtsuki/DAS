@@ -27,7 +27,7 @@
     /* Sisi Kiri (Brand Visual) */
     .brand-sidebar {
         background: linear-gradient(135deg, var(--das-dark) 0%, var(--das-teal) 100%);
-        color: white; /* Paksa text putih */
+        color: white;
         position: relative;
         overflow: hidden;
     }
@@ -108,11 +108,6 @@
 @endpush
 
 @section('content')
-<!-- Logic Penentuan Avatar -->
-@php
-    $role = Auth::user()->role;
-    $avatar = ($role === 'Administrator') ? 'user-1.jpg' : 'user-2.jpg';
-@endphp
 
 <div class="container-fluid security-container">
 
@@ -138,20 +133,17 @@
     <div class="card card-security">
         <div class="row g-0">
 
-            <!-- KOLOM KIRI: VISUAL BRANDING -->
+            <!-- KOLOM KIRI: VISUAL BRANDING (GANTI FOTO JADI IKON) -->
             <div class="col-lg-5 brand-sidebar p-5 d-flex flex-column justify-content-center align-items-center text-center">
 
                 <div class="position-relative z-1">
 
-                    <!-- FOTO PROFIL (Permintaan User) -->
-                    <div class="bg-white p-2 rounded-circle mb-4 d-inline-block shadow-lg" style="width: 140px; height: 140px;">
-                        <img src="{{ asset('template/assets/images/profile/' . $avatar) }}"
-                             alt="Profile"
-                             class="rounded-circle w-100 h-100"
-                             style="object-fit: cover;">
+                    <!-- IKON SHIELD SEBAGAI PENGGANTI FOTO PROFIL -->
+                    <div class="mb-4 text-white opacity-50">
+                        <i class="ti ti-shield-lock" style="font-size: 6rem;"></i>
                     </div>
 
-                    <!-- TEXT WARNA PUTIH (Agar terlihat jelas) -->
+                    <!-- TEXT WARNA PUTIH -->
                     <h2 class="fw-bold mb-3 text-white">Secure Your Account</h2>
                     <p class="text-white-50 mb-5 fs-4">Ensure your DAS System access remains private and secure.</p>
 

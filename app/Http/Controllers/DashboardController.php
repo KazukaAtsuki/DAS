@@ -58,8 +58,11 @@ class DashboardController extends Controller
                     'sensor_id' => $sensor->id,
                     'measured'  => $latestLog ? number_format($latestLog->measured_value, 2) : '0.00',
                     'raw'       => $latestLog ? number_format($latestLog->raw_value, 2) : '0.00',
-                    // Kirim data array untuk grafik
-                    'chart_data' => $historyLogs
+                    'log_id'    => $latestLog ? $latestLog->id : 0,
+                    'chart_data' => $historyLogs,
+
+                    // TAMBAHAN BARU: Kirim data limit ke JS
+                    'limit'     => $sensor->limit_value
                 ];
             }
 

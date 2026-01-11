@@ -158,13 +158,13 @@
 
             <div class="vr mx-1"></div>
 
-            <button id="btn-rca"
+            {{-- <button id="btn-rca"
                 class="btn {{ $isRcaOn ? 'btn-danger' : 'btn-dark' }} fw-bold rounded-pill px-4 btn-sm d-flex align-items-center gap-2"
                 onclick="toggleRcaMode()">
                 <i class="ti {{ $isRcaOn ? 'ti-player-stop' : 'ti-activity' }}"></i>
                 <span id="text-rca">{{ $isRcaOn ? 'Stop RCA' : 'Start RCA' }}</span>
                 <span id="loading-rca" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-            </button>
+            </button> --}}
         </div>
     </div>
 

@@ -2,6 +2,14 @@
 
 @push('styles')
 <style>
+    /* PENTING: Tambahkan Padding Top agar tidak ketutup header */
+    .config-container {
+        padding-top: 100px;
+        padding-bottom: 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
     /* Custom Style untuk efek modern */
     .card-modern {
         transition: all 0.3s ease;
@@ -11,8 +19,8 @@
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
     }
-    .border-left-primary { border-left: 5px solid #5d87ff !important; }
-    .border-left-info { border-left: 5px solid #49beff !important; }
+    .border-left-primary { border-left: 5px solid #009688 !important; }
+    .border-left-info { border-left: 5px solid #1e293b !important; }
     .border-left-warning { border-left: 5px solid #ffae1f !important; }
 
     .status-widget {
@@ -26,7 +34,7 @@
 @endpush
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid config-container">
 
     <!-- Header Page -->
     <div class="d-flex align-items-center justify-content-between mb-5">

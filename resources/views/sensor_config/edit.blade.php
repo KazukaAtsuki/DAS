@@ -35,6 +35,16 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <!-- TAMBAHAN: HIGH LIMIT (BAKU MUTU) -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-danger">High Limit (Baku Mutu)</label>
+                                <input type="number" step="0.01" name="limit_value" class="form-control border-danger"
+                                       value="{{ $sensor->limit_value }}" placeholder="Contoh: 50.00">
+                                <div class="form-text text-muted">Jika nilai melebihi angka ini, dashboard akan merah.</div>
+                            </div>
+                            <!-- END TAMBAHAN -->
+
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Analyzer IP</label>
                                 <input type="text" name="analyzer_ip" class="form-control" value="{{ $sensor->analyzer_ip }}">

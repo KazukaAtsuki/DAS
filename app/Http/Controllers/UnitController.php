@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Http;
 
 class UnitController extends Controller
 {
@@ -42,20 +43,39 @@ class UnitController extends Controller
 
     // 2. CREATE (Halaman Tambah)
     public function create()
-    {
-        return view('units.create');
+{
+    try {
+        // DAS memberitahu Python: "Saya (LOG-001) mau akses CRUD nih!"
+        Http::withHeaders([
+            'X-API-KEY' => env('PYTHON_API_KEY') // Pastikan API Key di .env DAS sudah benar
+        ])->post(env('PYTHON_API_URL') . "/request-access/LOG-001"); // Sesuaikan ID Logger-nya
+
+    } catch (\Exception $e) {
+        // Jika gagal konek ke python, biarkan saja atau log error
     }
+
+    return view('units.create');
+}
 
     // 3. STORE (Simpan Data Baru)
     public function store(Request $request)
     {
+        // Cukup gunakan aturan 'logger_active' yang baru kita buat di Provider
         $request->validate([
-            'name' => 'required',
+            'name'       => 'required|string|max:255',
+            'verif_code' => 'required|logger_active', // <--- SANGAT BERSIH!
+        ], [
+            // Pesan error kustom
+            'verif_code.logger_active' => 'Otorisasi Gagal! Kode salah atau sudah expired.',
         ]);
 
-        Unit::create($request->all());
+        // Jika kode di atas gagal, Laravel otomatis balik ke form dengan pesan error.
+        // Jika lolos, langsung simpan:
+        Unit::create([
+            'name' => $request->name
+        ]);
 
-        return redirect()->route('units.index')->with('success', 'Unit created successfully!');
+        return redirect()->route('units.index')->with('success', 'Unit berhasil ditambahkan!');
     }
 
     // 4. EDIT (Halaman Edit - INI YANG KETINGGALAN TADI)
