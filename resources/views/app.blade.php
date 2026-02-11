@@ -285,7 +285,7 @@
             </form>
 
             <div class="footer-text">
-                <i class="ti ti-copyright me-1"></i> {{ date('Y') }} PT Trusur Unggul Teknusa
+                <i class="ti ti-copyright me-1"></i> {{ date('Y') }} PT GenZys Digital Creatindo
             </div>
         </div>
     </div>

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\StackConfig;
 use App\Models\SensorConfig;
 use App\Models\DasLog;
-use App\Models\RcaLog; // Pastikan ini ada
+use App\Models\RcaLog;
 use App\Models\GlobalConfig;
 
 class DashboardController extends Controller
@@ -25,7 +25,7 @@ class DashboardController extends Controller
         $sensors = $sensorQuery->get();
         $stacks = StackConfig::all();
 
-        // 2. LOGIKA AJAX (MODIFIKASI UNTUK CHART)
+        // 2. LOGIKA AJAX (MODIFIKASI UNTUK LIVE DATA & ALARM)
         if ($request->ajax()) {
             $realtimeData = [];
 
@@ -39,13 +39,12 @@ class DashboardController extends Controller
                                    ->first();
 
                 // B. Ambil 20 data terakhir untuk Grafik (Chart History)
-                // Kita ambil descending (terbaru), lalu sort ascending (lama ke baru) agar grafik jalan ke kanan
                 $historyLogs = $model::where('sensor_config_id', $sensor->id)
                                     ->orderBy('id', 'desc')
-                                    ->take(20) // Ambil 20 titik data
+                                    ->take(20)
                                     ->get()
-                                    ->sortBy('id') // Balik urutan agar kronologis
-                                    ->pluck('measured_value') // Hanya ambil nilainya
+                                    ->sortBy('id')
+                                    ->pluck('measured_value')
                                     ->values()
                                     ->toArray();
 
@@ -61,8 +60,10 @@ class DashboardController extends Controller
                     'log_id'    => $latestLog ? $latestLog->id : 0,
                     'chart_data' => $historyLogs,
 
-                    // TAMBAHAN BARU: Kirim data limit ke JS
-                    'limit'     => $sensor->limit_value
+                    // --- SINKRONISASI LIMIT & WARNING KE JAVASCRIPT ---
+                    'limit'     => $sensor->limit_value,
+                    'warning1'  => $sensor->warning_1, // Tambahan: Mengirim batas peringatan 1
+                    'warning2'  => $sensor->warning_2, // Tambahan: Mengirim batas peringatan 2
                 ];
             }
 

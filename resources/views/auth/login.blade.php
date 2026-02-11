@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login - Trusur DAS System</title>
+  <title>Login - DAS System</title>
   <link rel="shortcut icon" type="image/png" href="{{ asset('template/assets/images/logos/favicon.png') }}" />
   <link rel="stylesheet" href="{{ asset('template/assets/css/styles.min.css') }}" />
 
@@ -212,7 +212,7 @@
                   </button>
 
                   <div class="text-center login-footer">
-                    <p class="mb-0 fw-bold">© {{ date('Y') }} PT. Trusur Unggul Teknusa</p>
+                    <p class="mb-0 fw-bold">© {{ date('Y') }} PT. GenZys Digital Creatindo</p>
                     <small class="text-muted">Data Acquisition System v1.0</small>
                   </div>
 

@@ -43,17 +43,41 @@ class AuthController extends Controller
     }
 
     // 3. Proses Logout
-    public function logout(Request $request)
-    {
-        // --- CATAT LOG LOGOUT (Sebelum session dihancurkan) ---
-        ActivityLog::record('LOGOUT', 'User logged out from system.');
+   // app/Http/Controllers/AuthController.php
 
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+public function logout(Request $request)
+{
+    // 1. Ambil ID Logger dari session sebelum logout
+    $loggerId = session('setup_logger_id');
 
-        return redirect()->route('login')->with('success', 'Anda berhasil logout.');
+    if ($loggerId) {
+        try {
+            // 2. Tembak Python API untuk menghapus data di pusat (Port 8000)
+            \Illuminate\Support\Facades\Http::withHeaders([
+                'X-API-KEY' => env('PYTHON_API_KEY')
+            ])->delete(env('PYTHON_API_URL') . "/loggers/" . $loggerId);
+
+            // 3. Hapus file gembok lokal agar mesin adam_reader juga berhenti
+            $path = storage_path('app/expired.txt');
+            if (\Illuminate\Support\Facades\File::exists($path)) {
+                \Illuminate\Support\Facades\File::delete($path);
+            }
+
+            // 4. Hapus session ID
+            session()->forget('setup_logger_id');
+
+        } catch (\Exception $e) {
+            // Jika gagal konek ke python, abaikan agar logout tetap berjalan
+        }
     }
+
+    // Prosedur Logout Standar Laravel
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login')->with('success', 'Sesi dan Lisensi telah dihapus. Silahkan login kembali.');
+}
 
     // ... code login logout sebelumnya ...
 
@@ -87,7 +111,7 @@ class AuthController extends Controller
         $user->update($data);
 
         // Catat Log
-        \App\Models\ActivityLog::record('UPDATE', 'User updated their own profile.');
+        ActivityLog::record('UPDATE', 'User updated their own profile.');
 
         return back()->with('success', 'Profile updated successfully!');
     }
@@ -117,7 +141,7 @@ class AuthController extends Controller
          ]);
 
          // Catat Log
-         \App\Models\ActivityLog::record('UPDATE', 'User changed their password via Security Settings.');
+         ActivityLog::record('UPDATE', 'User changed their password via Security Settings.');
 
          return back()->with('success', 'Password changed successfully!');
      }

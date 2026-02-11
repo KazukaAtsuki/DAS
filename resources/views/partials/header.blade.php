@@ -4,10 +4,12 @@
 
       <div class="container-fluid px-4">
 
+          <!-- Container Utama -->
           <div class="d-flex align-items-center justify-content-between w-100" style="height: 70px;">
 
               <!-- 1. BAGIAN KIRI: LOGO -->
-              <div class="d-flex align-items-center" style="width: 250px;">
+              <!-- Kita beri flex: 1 agar ukurannya seimbang dengan bagian kanan -->
+              <div class="d-flex align-items-center" style="flex: 1; min-width: 200px;">
                 <a href="{{ route('dashboard') }}" class="text-nowrap logo-img d-flex align-items-center gap-2 text-decoration-none">
                     <div style="position: relative; width: 38px; height: 38px;">
                         <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,65 +30,35 @@
                 </a>
               </div>
 
-              <!-- 2. BAGIAN TENGAH: MENU (FIXED POSITION) -->
-              <div class="d-none d-xl-flex position-absolute start-50 translate-middle-x">
-                <ul class="navbar-nav flex-row align-items-center gap-1">
+              <!-- 2. BAGIAN TENGAH: MENU (GESER KE TENGAH) -->
+              <!-- Menggunakan flex-grow dan justify-content-center agar menu berada di tengah layar -->
+              <div class="d-none d-xl-flex align-items-center justify-content-center" style="flex: 2;">
+                <ul class="navbar-nav flex-row align-items-center gap-3">
 
                     <style>
-                        /* --- CSS NAVIGASI BARU (STYLE GARIS BAWAH) --- */
                         .nav-custom {
                             font-weight: 700;
-                            font-size: 14px !important; /* Ukuran font sedikit diperbesar agar jelas */
+                            font-size: 13px !important;
                             color: #5a6a85 !important;
-                            padding: 22px 10px !important; /* Padding atas bawah disesuaikan dengan tinggi navbar */
+                            padding: 22px 5px !important;
                             transition: all 0.2s ease;
                             display: flex;
                             align-items: center;
                             gap: 6px;
-                            border-bottom: 3px solid transparent; /* Garis transparan default */
-                            border-radius: 0; /* Hapus lengkungan */
+                            border-bottom: 3px solid transparent;
+                            white-space: nowrap !important; /* Mencegah teks pecah */
                         }
 
-                        /* Efek Hover */
-                        .nav-custom:hover {
-                            color: #009688 !important;
-                            background-color: transparent; /* Tidak ada background saat hover */
-                        }
-
-                        /* Efek Aktif (Garis Bawah Hijau) */
-                        .nav-custom.active {
-                            color: #009688 !important; /* Teks jadi Hijau Teal */
-                            background-color: transparent; /* Hapus background blok */
-                            box-shadow: none; /* Hapus bayangan */
-                            border-bottom: 3px solid #009688; /* Munculkan Garis Bawah */
-                        }
-
+                        .nav-custom:hover { color: #009688 !important; }
+                        .nav-custom.active { color: #009688 !important; border-bottom: 3px solid #009688; }
                         .dropdown-toggle::after { display: none; }
 
-                        /* CSS Custom Dropdown Item */
                         .custom-dd-item {
-                            display: flex;
-                            align-items: center;
-                            gap: 10px;
-                            padding: 10px 12px;
-                            border-radius: 8px;
-                            color: #4a5568;
-                            font-weight: 600;
-                            font-size: 13px;
-                            transition: all 0.2s;
+                            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+                            border-radius: 8px; color: #4a5568; font-weight: 600; font-size: 13px;
                         }
-                        .custom-dd-item i {
-                            font-size: 18px;
-                            color: #009688;
-                            transition: transform 0.2s;
-                        }
-                        .custom-dd-item:hover {
-                            background-color: #f2fcfb;
-                            color: #009688;
-                        }
-                        .custom-dd-item:hover i {
-                            transform: scale(1.1);
-                        }
+                        .custom-dd-item i { font-size: 18px; color: #009688; }
+                        .custom-dd-item:hover { background-color: #f2fcfb; color: #009688; }
                     </style>
 
                     <li class="nav-item">
@@ -95,14 +67,9 @@
                     <li class="nav-item">
                         <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('logs.*') ? 'active' : '' }}" href="{{ route('logs.index') }}">Logs Data</a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('rca.*') ? 'active' : '' }}" href="{{ route('rca.index') }}">RCA Records</a>
-                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link nav-custom text-uppercase {{ request()->routeIs('hourly.*') ? 'active' : '' }}" href="{{ route('hourly.index') }}">Hourly Avg</a>
                     </li>
-
-
 
                     <li class="nav-item dropdown">
                         <a class="nav-link nav-custom text-uppercase dropdown-toggle {{ request()->is('master*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -125,14 +92,26 @@
                             <li><a class="dropdown-item custom-dd-item" href="{{ route('users.index') }}"><i class="ti ti-users"></i> User Management</a></li>
                         </ul>
                     </li>
-
                 </ul>
               </div>
 
-              <!-- 3. BAGIAN KANAN: NOTIF & PROFIL -->
-              <div class="d-flex align-items-center justify-content-end gap-2" style="width: 250px;">
+              <!-- 3. BAGIAN KANAN: WAKTU, NOTIF & PROFIL -->
+              <!-- flex: 1 agar seimbang dengan bagian logo di kiri -->
+              <div class="d-flex align-items-center justify-content-end gap-2" style="flex: 1; min-width: 350px;">
 
-                <!-- Notifikasi Dropdown -->
+                <!-- COUNTDOWN TIMER -->
+                @if(isset($sessionExpiry) && $sessionExpiry)
+                <div class="d-none d-md-flex align-items-center me-2 px-3 py-1 rounded-pill shadow-sm"
+                     style="background-color: #fff8e1; border: 1px solid #ffe082;">
+                    <i class="ti ti-clock-play me-2" style="color: #ff8f00; font-size: 1.1rem;"></i>
+                    <div class="lh-1">
+                        <p class="mb-0 text-muted text-uppercase" style="font-size: 8px; font-weight: 800;">Exp In</p>
+                        <span id="countdownText" class="fw-bolder" style="color: #ff8f00; font-size: 13px; font-family: monospace;">00:00</span>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Notifikasi Dropdown (KODE ASLI TIDAK DIUBAH) -->
                 <li class="nav-item dropdown me-2 list-unstyled">
                     <a class="nav-link nav-icon-hover d-flex align-items-center justify-content-center rounded-circle" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px; transition: 0.2s;">
                       <style>
@@ -152,22 +131,22 @@
                     <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up shadow-lg border-0 rounded-4 mt-2" aria-labelledby="drop2" style="min-width: 320px;">
                       <div class="d-flex align-items-center justify-content-between py-3 px-4 border-bottom">
                         <h5 class="mb-0 fs-4 fw-bold text-dark">User Logs</h5>
-                        <span class="badge bg-light-primary text-primary rounded-pill px-3 py-1 fs-2 fw-semibold">{{ isset($notifications) ? count($notifications) : 0 }} New</span>
+                        <span class="badge bg-light-primary text-primary rounded-pill px-3 py-1 fs-2 fw-semibold">
+                            {{ isset($notifications) ? count($notifications) : 0 }} New
+                        </span>
                       </div>
                       <div class="message-body" data-simplebar style="max-height: 350px; overflow-y: auto;">
-                        @forelse($notifications as $log)
+                        @forelse(($notifications ?? []) as $log)
                             <a href="javascript:void(0)" class="py-3 px-4 d-flex align-items-start dropdown-item border-bottom border-light">
                               <div class="position-relative me-3 mt-1">
                                   @php
                                       $icon = 'ti-edit';
                                       $bgColor = '#E0F2F1'; $textColor = '#009688';
-
-                                      if($log->action == 'CREATE') { $icon = 'ti-plus'; $bgColor = '#E0F2F1'; $textColor = '#009688'; }
+                                      if($log->action == 'CREATE') { $icon = 'ti-plus'; }
                                       elseif($log->action == 'DELETE') { $icon = 'ti-trash'; $bgColor = '#FFEBEE'; $textColor = '#D32F2F'; }
-                                      elseif($log->action == 'LOGIN') { $icon = 'ti-login'; $bgColor = '#E0F2F1'; $textColor = '#009688'; }
-                                      elseif($log->action == 'LOGOUT') { $icon = 'ti-logout'; $bgColor = '#FFF3E0'; $textColor = '#F57C00'; }
+                                      elseif($log->action == 'LOGIN') { $icon = 'ti-login'; }
+                                      elseif($log->action == 'LOGOUT') { $icon = 'ti-logout'; }
                                   @endphp
-
                                   <div class="rounded-circle d-flex align-items-center justify-content-center"
                                        style="width: 40px; height: 40px; background-color: {{ $bgColor }}; color: {{ $textColor }};">
                                       <i class="ti {{ $icon }} fs-5"></i>
@@ -193,12 +172,10 @@
 
                 <!-- PROFIL USER (TEXT ONLY) -->
                 <div class="dropdown">
-                    <!-- Trigger Profil -->
-                    <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-2 rounded-3 bg-light hover-bg-light transition"
+                    <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-2 rounded-3 bg-light"
                        href="javascript:void(0)" id="dropProfile" data-bs-toggle="dropdown" aria-expanded="false"
-                       style="transition: all 0.3s; background-color: #f8f9fa;">
+                       style="background-color: #f8f9fa;">
 
-                        <!-- ICON USER SEBAGAI PENGGANTI FOTO -->
                         <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 35px; height: 35px;">
                             <i class="ti ti-user fs-5 text-dark"></i>
                         </div>
@@ -211,53 +188,40 @@
                         <i class="ti ti-chevron-down text-muted" style="font-size: 10px;"></i>
                     </a>
 
-                    <!-- Isi Dropdown Profil -->
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up border-0 shadow-lg mt-3 p-0 rounded-4 overflow-hidden"
                          aria-labelledby="dropProfile" style="min-width: 280px;">
 
-                        <!-- Header Dropdown (Tanpa Foto Besar) -->
                         <div class="p-4 bg-light-primary bg-opacity-50 text-center border-bottom border-light">
-                             <!-- Ganti Foto dengan Icon User Besar -->
                              <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2 text-primary"
                                   style="width: 60px; height: 60px;">
                                 <i class="ti ti-user fs-1"></i>
                              </div>
-
                             <h5 class="fw-bold mb-0 text-dark">{{ Auth::user()->name }}</h5>
                             <span class="text-muted fs-3">{{ Auth::user()->email }}</span>
                         </div>
 
-                        <!-- Menu Actions -->
                         <div class="p-2">
-                            <a href="{{ route('my-profile') }}" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 transition hover-bg-light">
-                                <div class="bg-light p-2 rounded-circle text-primary"><i class="ti ti-user fs-5"></i></div>
-                                <div>
-                                    <h6 class="mb-0 fw-semibold text-dark">My Profile</h6>
-                                    <span class="text-muted small">Account settings</span>
-                                </div>
+                            <a href="{{ route('my-profile') }}" class="dropdown-item rounded-3 py-2 px-3">
+                                <i class="ti ti-user me-2"></i> My Profile
                             </a>
-
-                            <a href="{{ route('security') }}" class="d-flex align-items-center gap-3 dropdown-item rounded-3 py-2 px-3 mt-1 hover-bg-light transition">
-                                <div class="bg-light p-2 rounded-circle text-info"><i class="ti ti-shield-lock fs-5"></i></div>
-                                <div>
-                                    <h6 class="mb-0 fw-semibold text-dark">Security</h6>
-                                    <span class="text-muted small">Change password</span>
-                                </div>
+                            <a href="{{ route('security') }}" class="dropdown-item rounded-3 py-2 px-3">
+                                <i class="ti ti-shield-lock me-2"></i> Security
                             </a>
                         </div>
 
-                        <div class="p-3 border-top bg-light bg-opacity-25">
+                        <div class="p-3 border-top bg-light">
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-danger w-100 rounded-pill py-2 fw-bold d-flex align-items-center justify-content-center gap-2 transition hover-scale">
-                                    <i class="ti ti-power fs-5"></i> Sign Out
+                                <button type="submit" class="btn btn-outline-danger w-100 rounded-pill fw-bold">
+                                    <i class="ti ti-power me-2"></i> Sign Out
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
 
-              </div>
+
+              </div> <!-- End Right Side -->
 
           </div>
       </div>

@@ -59,24 +59,19 @@ class UnitController extends Controller
 
     // 3. STORE (Simpan Data Baru)
     public function store(Request $request)
-    {
-        // Cukup gunakan aturan 'logger_active' yang baru kita buat di Provider
-        $request->validate([
-            'name'       => 'required|string|max:255',
-            'verif_code' => 'required|logger_active', // <--- SANGAT BERSIH!
-        ], [
-            // Pesan error kustom
-            'verif_code.logger_active' => 'Otorisasi Gagal! Kode salah atau sudah expired.',
-        ]);
+{
+    // CUKUP VALIDASI NAMA SAJA
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
 
-        // Jika kode di atas gagal, Laravel otomatis balik ke form dengan pesan error.
-        // Jika lolos, langsung simpan:
-        Unit::create([
-            'name' => $request->name
-        ]);
+    // LANGSUNG SIMPAN (Karena Middleware sudah memastikan kamu punya izin)
+    Unit::create([
+        'name' => $request->name
+    ]);
 
-        return redirect()->route('units.index')->with('success', 'Unit berhasil ditambahkan!');
-    }
+    return redirect()->route('units.index')->with('success', 'Data Unit Berhasil Tersimpan!');
+}
 
     // 4. EDIT (Halaman Edit - INI YANG KETINGGALAN TADI)
     public function edit($id)

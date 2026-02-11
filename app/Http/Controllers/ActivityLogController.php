@@ -15,4 +15,4 @@ class ActivityLogController extends Controller
         // 2. Kirim variabel $logs ke View
         return view('activity_logs.index', compact('logs'));
     }
-}
+}   
